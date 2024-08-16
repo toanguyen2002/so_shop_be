@@ -6,77 +6,75 @@ import { JwtService } from '@nestjs/jwt';
 import { Role } from './enum/role.enum';
 import { UserDTO } from './dto/user.dto';
 import { error } from 'console';
+import * as bcrypt from 'bcrypt';
 
-
-// This should be a real class/interface representing a user entity
 export type User = any;
-
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel(Users.name) private readonly model: Model<UsersDocument>,
         private jwtService: JwtService
     ) { }
-
-    private readonly users = [
-        {
-            userId: 1,
-            username: 'john',
-            password: 'changeme',
-            role: ["ADMIN", "BUYER", "SELLER"]
-        },
-        {
-            userId: 2,
-            username: 'maria',
-            password: 'guess',
-            role: ["BUYER"]
-
-        },
-    ];
     async signIn(
-        username: string,
+        userName: string,
         pass: string,
-    ): Promise<any> {
-        const user = await this.users.find(user => user.username === username)
-        if (user?.password !== pass) {
-            throw new UnauthorizedException();
-        }
-        // const payload = { sub: user.userId, username: user.username };
-        const { password, ...payload } = user
-        return {
-            username: user.username,
-            access_token: await this.jwtService.signAsync(payload),
-        };
-    }
-
-    async signUp(userName: string, password: string): Promise<User> {
-        console.log(userName + " " + password);
+    ): Promise<User> {
         const existUser = await this.model.aggregate([{
             $match: { userName: userName }
         }])
 
-        console.log(existUser);
-        if (existUser) {
-            console.log("đã vào");
+        if (existUser.length > 0) {
+            if (await bcrypt.compare(pass, existUser[0].password)) {
+                const { password, ...payload } = existUser[0]
+                return {
+                    ...payload,
+                    access_token: await this.jwtService.signAsync(payload)
+                }
+            } else {
+                return "Mật khẩu không chính xác"
+            }
+        } else {
+            return "Tài khoản không tồn tại"
+        }
+    }
 
+    async signUp(
+        userName: string,
+        password: string)
+        : Promise<User> {
+        const existUser = await this.model.aggregate([{
+            $match: { userName: userName }
+        }])
+        if (existUser.length > 0) {
             return "user đã tồn tại"
         }
         console.log("không vào");
-
+        const hash = await bcrypt.hash(password, 10);
         return await new this.model({
             userName: userName,
-            password: password,
+            password: hash,
             role: ["BUYER"]
         }).save();
     }
 
-    async getprofile(id: string): Promise<User> {
-        const user = await this.model.findById(id)
-        const { password, ...payload } = user
+    async getprofile(userName: string): Promise<User> {
+        const existUser = await this.model.aggregate([{
+            $match: { userName: userName }
+        }])
+        const { password, ...payload } = existUser[0]
         return payload
     }
 
-    async findByIdAndUpdateUser(): Promise<User> {
+    async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
+        // const existUser = await this.model.aggregate([{
+        //     $match: { userName: userDTO.userName }
+        // }])
+        try {
+            return await this.model.findByIdAndUpdate(userDTO.id, userDTO)
+        } catch (error) {
+            throw new error
+        }
+
 
     }
 }

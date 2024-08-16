@@ -8,35 +8,47 @@ import { UserDTO } from './dto/user.dto';
 @Controller('users')
 export class UsersController {
     constructor(private readonly service: UsersService) { }
-    @Post("/login")
-    @Public()
-    async login(@Body() username: string, pass: string) {
-        const rs = await this.service.signIn("john", "changeme")
-        return rs
-    }
-
-    @Public()
-    @Get('profile')
-    async getByUserName(@Request() req) {
-        // console.log("Public");
-        return req.user
-    }
-
-    // @Public()
-    @Roles(Role.BUYER)
-    @Get('admin')
-    async admin(@Request() req) {
-        // console.log("Public");
-        return req.user
-    }
-
 
     @Public()
     @Post('/register')
     async register(@Body() userDTO: UserDTO) {
-
-        // console.log(userDTO);
         return this.service.signUp(userDTO.userName, userDTO.password)
 
     }
+
+    @Public()
+    @Post("/login")
+    async login(@Body() userDTO: UserDTO) {
+        const rs = await this.service.signIn(userDTO.userName, userDTO.password)
+        return rs
+    }
+
+    @Roles(Role.BUYER)
+    @Get('profile')
+    async getByUserName(@Request() req) {
+        return req.user
+    }
+
+    // @Roles(Role.BUYER)
+    // @Get('admin')
+    // async admin(@Request() req) {
+    //     return req.user
+    // }
+
+    @Roles(Role.BUYER)
+    @Post("/update")
+    async updateByUser(@Body() userDTO: UserDTO) {
+        console.log(userDTO.userName);
+
+        return this.service.findByIdAndUpdateUser(userDTO)
+
+    }
+
+    @Roles(Role.ADMIN)
+    async updateByAdmin() {
+
+    }
+
+
+
 }
