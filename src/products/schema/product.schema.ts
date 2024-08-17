@@ -5,6 +5,7 @@ import * as mongoose from 'mongoose';
 import { Medias } from "src/media/schema/media.schema";
 import { Attributes } from "src/attributes/schema/attributes.schema";
 import { Classify } from "src/classify/schema/classify.schema";
+import { Rattings } from "src/rattings/schema/rattings.schema";
 
 
 export type ProductsDocument = Products & Document;
@@ -25,6 +26,10 @@ export class Products {
     // vd: Gold:250k:25
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Classify' }] })
     classify: Classify[]
+    //dt dep
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rattings' }] })
+    rattings: Rattings[]
+
     //samsung 
     @Prop()
     brand: string
