@@ -66,15 +66,10 @@ export class UsersService {
     }
 
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
-        // const existUser = await this.model.aggregate([{
-        //     $match: { userName: userDTO.userName }
-        // }])
         try {
             return await this.model.findByIdAndUpdate(userDTO.id, userDTO)
         } catch (error) {
             throw new error
         }
-
-
     }
 }
