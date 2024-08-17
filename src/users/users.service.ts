@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from './enum/role.enum';
 import { UserDTO } from './dto/user.dto';
-import { error } from 'console';
 import * as bcrypt from 'bcrypt';
 
 export type User = any;
@@ -48,7 +47,6 @@ export class UsersService {
         if (existUser.length > 0) {
             return "user đã tồn tại"
         }
-        console.log("không vào");
         const hash = await bcrypt.hash(password, 10);
         return await new this.model({
             userName: userName,
@@ -66,6 +64,8 @@ export class UsersService {
     }
 
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
+        const hash = await bcrypt.hash(userDTO.password, 10);
+        userDTO.password = hash
         try {
             return await this.model.findByIdAndUpdate(userDTO.id, userDTO)
         } catch (error) {

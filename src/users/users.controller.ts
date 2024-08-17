@@ -38,12 +38,11 @@ export class UsersController {
     @Roles(Role.BUYER)
     @Post("/update")
     async updateByUser(@Body() userDTO: UserDTO) {
-        console.log(userDTO.userName);
-
         return this.service.findByIdAndUpdateUser(userDTO)
 
     }
-
+    @Roles(Role.ADMIN)
+    @Post("/admin/update")
     @Roles(Role.ADMIN)
     async updateByAdmin() {
 
