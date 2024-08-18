@@ -51,6 +51,13 @@ export class ProductsService {
                 foreignField: "product",
                 as: "attributes"
             }
+        }, {
+            $lookup: {
+                from: "medias",
+                localField: "_id",
+                foreignField: "product",
+                as: "medias"
+            }
         },
         {
             $unwind: "$attributes"
@@ -64,7 +71,8 @@ export class ProductsService {
                             brand: '$brand',
                             selled: '$selled',
                             dateUp: '$dateUp',
-                            classifies: '$classifies'
+                            classifies: '$classifies',
+                            medias: '$medias'
                         },
                         '$attributes'
                     ]
@@ -78,7 +86,8 @@ export class ProductsService {
                     brand: '$brand',
                     selled: '$selled',
                     dateUp: '$dateUp',
-                    classifies: '$classifies'
+                    classifies: '$classifies',
+                    medias: '$medias'
                 },
                 attributes: {
                     $push: {
@@ -95,6 +104,7 @@ export class ProductsService {
                 selled: "$_id.selled",
                 dateUp: "$_id.dateUp",
                 classifies: "$_id.classifies",
+                medias: '$_id.medias',
                 attributes: 1
             }
         },
@@ -110,7 +120,8 @@ export class ProductsService {
                             brand: '$brand',
                             selled: '$selled',
                             dateUp: '$dateUp',
-                            attributes: '$attributes'
+                            attributes: '$attributes',
+                            medias: '$medias',
                         },
                         '$classifies'
                     ]
@@ -124,7 +135,9 @@ export class ProductsService {
                     brand: '$brand',
                     selled: '$selled',
                     dateUp: '$dateUp',
-                    attributes: '$attributes'
+                    attributes: '$attributes',
+                    medias: '$medias',
+
                 },
                 classifies: {
                     $push: {
@@ -144,7 +157,58 @@ export class ProductsService {
                 selled: "$_id.selled",
                 dateUp: "$_id.dateUp",
                 attributes: "$_id.attributes",
+                medias: '$_id.medias',
                 classifies: 1
+            }
+        },
+        {
+            $unwind: "$medias"
+        },
+        {
+            $replaceRoot: {
+                newRoot: {
+                    $mergeObjects: [
+                        {
+                            productName: '$productName',
+                            brand: '$brand',
+                            selled: '$selled',
+                            dateUp: '$dateUp',
+                            attributes: '$attributes',
+                            classifies: '$classifies',
+                        },
+                        '$medias'
+                    ]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    productName: "$productName",
+                    brand: '$brand',
+                    selled: '$selled',
+                    dateUp: '$dateUp',
+                    attributes: '$attributes',
+                    classifies: '$classifies'
+                },
+                medias: {
+                    $push: {
+                        urlMedia: "$urlMedia",
+                        typeofMedia: "$typeofMedia",
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                productName: "$_id.productName",
+                brand: "$_id.brand",
+                selled: "$_id.selled",
+                dateUp: "$_id.dateUp",
+                attributes: "$_id.attributes",
+                classifies: '$_id.classifies',
+                medias: 1
             }
         }
         ])
