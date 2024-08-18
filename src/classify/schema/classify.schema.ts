@@ -9,7 +9,7 @@ export class Classify {
     @Prop()
     value: string
     @Prop()
-    price: string
+    price: number
     @Prop()
     stock: number
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Products' })
