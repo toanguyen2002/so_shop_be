@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { Products } from "src/products/schema/product.schema";
 export type ClassifyDocument = Classify & Document
 @Schema()
 export class Classify {
@@ -11,5 +12,7 @@ export class Classify {
     price: string
     @Prop()
     stock: number
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Products' })
+    product: Products
 }
 export const ClassifySchema = SchemaFactory.createForClass(Classify);

@@ -1,9 +1,8 @@
-import { Get, Injectable, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersDocument, Users } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from './enum/role.enum';
 import { UserDTO } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -66,8 +65,11 @@ export class UsersService {
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
         const hash = await bcrypt.hash(userDTO.password, 10);
         userDTO.password = hash
+        console.log(userDTO);
+        const { password, ...payload } = userDTO
         try {
-            return await this.model.findByIdAndUpdate(userDTO.id, userDTO)
+            await this.model.findByIdAndUpdate(userDTO.id, userDTO)
+            return payload
         } catch (error) {
             throw new error
         }

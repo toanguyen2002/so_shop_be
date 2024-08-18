@@ -12,7 +12,7 @@ export class UsersController {
     @Public()
     @Post('/register')
     async register(@Body() userDTO: UserDTO) {
-        return this.service.signUp(userDTO.userName, userDTO.password)
+        return await this.service.signUp(userDTO.userName, userDTO.password)
 
     }
 
@@ -26,7 +26,7 @@ export class UsersController {
     @Roles(Role.BUYER)
     @Get('profile')
     async getByUserName(@Request() req) {
-        return req.user
+        return await req.user
     }
 
     // @Roles(Role.BUYER)
@@ -38,7 +38,7 @@ export class UsersController {
     @Roles(Role.BUYER)
     @Post("/update")
     async updateByUser(@Body() userDTO: UserDTO) {
-        return this.service.findByIdAndUpdateUser(userDTO)
+        return await this.service.findByIdAndUpdateUser(userDTO)
 
     }
     @Roles(Role.ADMIN)
