@@ -5,12 +5,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductsDTO, SellProductsDTO } from './dto/products.dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { ClassifyService } from 'src/classify/classify.service';
+import { WalletService } from 'src/wallet/wallet.service';
+import { WallerDTO } from 'src/wallet/dto/wallet.dto';
+import { error } from 'console';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectModel(Products.name) private readonly model: Model<ProductsDocument>,
-        private readonly classifyService: ClassifyService
+        private readonly classifyService: ClassifyService,
+        private readonly walletService: WalletService,
     ) { }
 
 
@@ -33,26 +37,35 @@ export class ProductsService {
     }
 
     async sellProduct(sellProductsDTO: SellProductsDTO): Promise<any> {
-        // const classify = await this.classifyService.getAllClassifyByProductId(sellProductsDTO)
-        // console.log(classify);
-        const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
-        console.log(updateClassify);
+        const classify = await this.classifyService.getOnelassifyById(sellProductsDTO.classifyId)
+        const balance = await this.walletService.getBalance({ user: sellProductsDTO.userId, balance: 0 })
+        const totalBalence = classify.price * sellProductsDTO.numberProduct
+        if (classify.stock >= sellProductsDTO.numberProduct) {
+            if (balance.balance > totalBalence) {
+                const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
+                const products = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(sellProductsDTO.productId) } }])
+                if (updateClassify) {
+                    products[0].selled = products[0].selled + sellProductsDTO.numberProduct
+                    await this.walletService.dereBalance({ user: sellProductsDTO.userId, balance: totalBalence })
+                    await this.model.findByIdAndUpdate(products[0]._id, products[0])
+                    return {
+                        type: true,
+                        Code: "Thanh Toán Thành Công Sản Phẩm"
+                    };
+                } else {
 
-        if (updateClassify) {
-            try {
-                const products = await this.model.aggregate([{
-                    $match: {
-                        _id: new mongoose.Types.ObjectId(sellProductsDTO.productId),
-                    }
-                }])
-                products[0].selled += sellProductsDTO.numberProduct
-                await this.model.findByIdAndUpdate(products[0], products[0])
-                return true;
-            } catch (error) {
-                return error;
+                }
+            } else {
+                return {
+                    type: false,
+                    Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
+                };
             }
         } else {
-            return false
+            return {
+                type: false,
+                Code: "Sản Phẩm Không Đủ Hàng"
+            };
         }
 
     }

@@ -10,4 +10,5 @@ export class SellProductsDTO {
     productId: string
     classifyId: string
     numberProduct: number
+    userId: string
 }

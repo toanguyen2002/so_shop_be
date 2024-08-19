@@ -14,4 +14,10 @@ export class ClassifyController {
         console.log(classifyDTO);
         return await this.classifyService.addClassify(classifyDTO)
     }
+    @Public()
+    @Post('update')
+    async updateClassify(@Body() classifyDTO: ClassifyDTO) {
+        return await this.classifyService.updateClassify(classifyDTO)
+    }
+
 }

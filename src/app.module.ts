@@ -22,6 +22,8 @@ import { MediaController } from './media/media.controller';
 import { MediaModule } from './media/media.module';
 import { AttributesController } from './attributes/attributes.controller';
 import { AttributesModule } from './attributes/attributes.module';
+import { HistoryController } from './history/history.controller';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -42,6 +44,7 @@ import { AttributesModule } from './attributes/attributes.module';
       secret: "nguyenquangtoan",
       signOptions: { expiresIn: '3600s' },
     }),
+    HistoryModule,
     // S3Module.forRoot({
     //   config: {
     //     credentials: {
@@ -63,6 +66,7 @@ import { AttributesModule } from './attributes/attributes.module';
     WalletController,
     MediaController,
     AttributesController,
+    HistoryController,
   ],
   providers:
     [AppService,
