@@ -15,9 +15,58 @@ export class CategoriesService {
     }
 
     async getAll(): Promise<Categories[]> {
-        return await this.model.find()
+        return await this.model.find().exec()
     }
+    async getAllCateWithProductExist() {
+        return await this.model.aggregate([
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "cate",
+                    as: "products"
+                }
+            },
+            {
 
+                $unwind: "$products"
+
+            }, {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: [
+                            {
+                                categoriesName: '$categoriesName',
+                            },
+                            '$products'
+                        ]
+                    }
+                }
+            }, {
+                $group: {
+                    _id: {
+                        categoriesName: "$categoriesName",
+
+                    },
+                    products: {
+                        $push: {
+                            productName: "$productName",
+                            brand: "$brand",
+                            selled: "$selled",
+                            dateUp: "$dateUp"
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    categoriesName: "$_id.categoriesName",
+                    products: 1
+                }
+            }
+        ]);
+    }
     update() { }
 
 }

@@ -15,9 +15,15 @@ export class CategoriesController {
         return await this.cateService.add(cateDTO.categoriesName);
     }
     @Public()
-    @Get("/")
+    @Get("/allCate")
     async getCate() {
         return await this.cateService.getAll();
+    }
+
+    @Public()
+    @Get("/")
+    async getAllCateWithAllProducts() {
+        return await this.cateService.getAllCateWithProductExist()
     }
 
 }

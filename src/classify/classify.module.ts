@@ -3,6 +3,7 @@ import { ClassifyController } from './classify.controller';
 import { ClassifyService } from './classify.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Classify, ClassifySchema } from './schema/classify.schema';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
   controllers: [ClassifyController],

@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Products, ProductsDocument } from './schema/product.schema';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ProductsDTO } from './dto/products.dto';
+import { ProductsDTO, SellProductsDTO } from './dto/products.dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { ClassifyService } from 'src/classify/classify.service';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectModel(Products.name) private readonly model: Model<ProductsDocument>,
+        private readonly classifyService: ClassifyService
     ) { }
 
 
@@ -28,6 +30,31 @@ export class ProductsService {
 
     async getProducts(): Promise<Products[]> {
         return await this.model.find().exec();
+    }
+
+    async sellProduct(sellProductsDTO: SellProductsDTO): Promise<any> {
+        // const classify = await this.classifyService.getAllClassifyByProductId(sellProductsDTO)
+        // console.log(classify);
+        const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
+        console.log(updateClassify);
+
+        if (updateClassify) {
+            try {
+                const products = await this.model.aggregate([{
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(sellProductsDTO.productId),
+                    }
+                }])
+                products[0].selled += sellProductsDTO.numberProduct
+                await this.model.findByIdAndUpdate(products[0], products[0])
+                return true;
+            } catch (error) {
+                return error;
+            }
+        } else {
+            return false
+        }
+
     }
     async getProductById(id: string): Promise<any> {
         return await this.model.aggregate([{

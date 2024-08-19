@@ -5,3 +5,9 @@ export class ProductsDTO {
     selled: number
     dateUp: Date
 }
+
+export class SellProductsDTO {
+    productId: string
+    classifyId: string
+    numberProduct: number
+}
