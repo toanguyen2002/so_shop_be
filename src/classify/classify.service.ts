@@ -8,9 +8,7 @@ import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class ClassifyService {
-    constructor(@InjectModel(Classify.name) private readonly model: Model<ClassifyDocument>,
-
-    ) { }
+    constructor(@InjectModel(Classify.name) private readonly model: Model<ClassifyDocument>,) { }
 
     async addClassify(classifyđTO: ClassifyDTO): Promise<Classify> {
         return await new this.model(
@@ -32,6 +30,8 @@ export class ClassifyService {
     async getOnelassifyById(id: string): Promise<Classify> {
         return await this.model.findById(id)
     }
+
+
 
     async getAllClassifyByProductId(sellProductsDTO: SellProductsDTO): Promise<Classify> {
         const rs = await this.model.aggregate([{
@@ -67,5 +67,10 @@ export class ClassifyService {
         } catch (error) {
             return false;
         }
+    }
+    async calcClassify(id: string, calcClassify: number): Promise<any> {
+        const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id.toString()) } }])
+        classify[0].stock = classify[0].stock + calcClassify
+        return await this.model.findByIdAndUpdate(id, classify[0])
     }
 }

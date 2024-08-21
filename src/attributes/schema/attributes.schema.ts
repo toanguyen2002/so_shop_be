@@ -4,7 +4,7 @@ import { Products } from 'src/products/schema/product.schema';
 export type AttributesDocument = Attributes & Document;
 @Schema()
 export class Attributes {
-    @Prop({ unique: true, required: true })
+    @Prop({ required: true })
     key: string
     @Prop({
         type: mongoose.Schema.Types.Mixed,

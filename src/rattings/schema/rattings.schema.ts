@@ -9,7 +9,7 @@ export class Rattings {
     @Prop()
     comment: string
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Users" })
-    user: Users
+    buyer: Users
     @Prop()
     star: number
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Products' })

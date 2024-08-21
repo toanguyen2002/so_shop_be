@@ -1,8 +1,8 @@
-FROM node:22.3.0-alpine3.19
+FROM node:latest
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY . .
+COPY package*.json ./
 
 RUN npm i -g @nestjs/cli
 

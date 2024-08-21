@@ -31,7 +31,7 @@ export class ProductsService {
                 brand: productsDto.brand,
                 selled: 0,
                 dateUp: Date.now(),
-                user: productsDto.userup
+                seller: productsDto.seller
             }).save()
         } catch (error) {
             throw new ExceptionsHandler
@@ -53,27 +53,31 @@ export class ProductsService {
         return await this.model.findByIdAndUpdate(id, products[0])
     }
     async sellProduct(sellProductsDTO: SellProductsDTO): Promise<any> {
+
         const classify = await this.classifyService.getOnelassifyById(sellProductsDTO.classifyId)
-        const balance = await this.walletService.getBalance({ user: sellProductsDTO.userId, balance: 0 })
+        const balance = await this.walletService.getBalance({ user: sellProductsDTO.buyer, balance: 0 })
+
+
         const totalBalence = classify.price * sellProductsDTO.numberProduct
 
         if (classify.stock >= sellProductsDTO.numberProduct) {
-            if (balance.balance > totalBalence) {
-                const decreBalence = await this.walletService.dereBalance({ user: sellProductsDTO.userId, balance: totalBalence })
+            if (balance.balance >= totalBalence) {
+                const decreBalence = await this.walletService.dereBalance({ user: sellProductsDTO.buyer, balance: totalBalence })
                 const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
                 if (decreBalence) {
                     if (updateClassify) {
                         const products = await this.calcProduct(sellProductsDTO.productId, sellProductsDTO.numberProduct)
                         const trade = await this.TradeService.addTrade(
                             {
-                                tradeStatus: "pedding",
-                                buyer: sellProductsDTO.userId.toString(),
-                                sellby: products.user.toString(),
+                                tradeStatus: "pendding",
+                                buyer: sellProductsDTO.buyer.toString(),
+                                seller: products.seller.toString(),
                                 tradeId: (await bcrypt.hash(new Date().toString(), 10)).toString(),
                                 tradeTitle: "Buy Products",
-                                sellerAccept: false
+                                sellerAccept: false,
+                                products: []
                             })
-                        const his = await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, userHis: trade.buyer.toString() });
+                        await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, buyHis: trade.buyer.toString() });
 
                         return {
                             type: true,
@@ -151,7 +155,7 @@ export class ProductsService {
                             dateUp: '$dateUp',
                             classifies: '$classifies',
                             medias: '$medias',
-                            user: "$user"
+                            seller: "$seller"
                         },
                         '$attributes'
                     ]
@@ -167,7 +171,7 @@ export class ProductsService {
                     dateUp: '$dateUp',
                     classifies: '$classifies',
                     medias: '$medias',
-                    user: "$user"
+                    seller: "$seller"
 
                 },
                 attributes: {
@@ -187,7 +191,7 @@ export class ProductsService {
                 classifies: "$_id.classifies",
                 medias: '$_id.medias',
                 attributes: 1,
-                user: "$_id.user"
+                seller: "$_id.seller"
             }
         },
         {
@@ -204,7 +208,7 @@ export class ProductsService {
                             dateUp: '$dateUp',
                             attributes: '$attributes',
                             medias: '$medias',
-                            user: "$user"
+                            seller: "$seller"
                         },
                         '$classifies'
                     ]
@@ -220,7 +224,7 @@ export class ProductsService {
                     dateUp: '$dateUp',
                     attributes: '$attributes',
                     medias: '$medias',
-                    user: "$user"
+                    seller: "$seller"
 
                 },
                 classifies: {
@@ -242,7 +246,7 @@ export class ProductsService {
                 dateUp: "$_id.dateUp",
                 attributes: "$_id.attributes",
                 medias: '$_id.medias',
-                user: "$_id.user",
+                seller: "$_id.seller",
                 classifies: 1
             }
         },
@@ -260,7 +264,7 @@ export class ProductsService {
                             dateUp: '$dateUp',
                             attributes: '$attributes',
                             classifies: '$classifies',
-                            user: "$user"
+                            seller: "$seller"
                         },
                         '$medias'
                     ]
@@ -276,7 +280,7 @@ export class ProductsService {
                     dateUp: '$dateUp',
                     attributes: '$attributes',
                     classifies: '$classifies',
-                    user: "$user"
+                    seller: "$seller"
                 },
                 medias: {
                     $push: {
@@ -295,7 +299,7 @@ export class ProductsService {
                 dateUp: "$_id.dateUp",
                 attributes: "$_id.attributes",
                 classifies: '$_id.classifies',
-                user: "$_id.user",
+                seller: "$_id.seller",
                 medias: 1
             }
         }

@@ -1,6 +1,6 @@
 export class HistoriesDTO {
     idTrade: string
-    userHis: string
+    buyHis: string
     total: number
     tradeItem: any
 }

@@ -17,7 +17,7 @@ export class Products {
     cate: Categories
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Users' })
-    user: Users
+    seller: Users
 
     //samsung 
     @Prop({ required: true })

@@ -7,7 +7,8 @@ import { WalletService } from 'src/wallet/wallet.service';
 import { Products } from 'src/products/schema/product.schema';
 import { ProductsService } from 'src/products/products.service';
 import { ClassifyService } from 'src/classify/classify.service';
-
+import { CartService } from 'src/cart/cart.service';
+import * as bcrypt from 'bcrypt';
 @Controller('trade')
 export class TradeController {
     constructor(
@@ -17,8 +18,44 @@ export class TradeController {
         @Inject(forwardRef(() => ProductsService))
         private productsService: ProductsService,
         private classifyService: ClassifyService,
+        private cartsService: CartService,
+
 
     ) { }
+
+    @Public()
+    @Post("/handle")
+    async cartTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
+        for (let index = 0; index < tradeDTO.products.length; index++) {
+            console.log(tradeDTO.products[index]);
+
+
+            const trade = await this.tradeService.addTrade(
+                {
+                    tradeStatus: "pendding",
+                    buyer: tradeDTO.buyer.toString(),
+                    seller: tradeDTO.products[index].userSellId.toString(),
+                    tradeId: (await bcrypt.hash(new Date().toString(), 10)).toString(),
+                    tradeTitle: "buy products at " + new Date().getDate() + "/" + new Date().getMonth() + "/" + new Date().getFullYear(),
+                    sellerAccept: false,
+                    products: undefined
+                })
+            // await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, userHis: trade.buyer.toString() });
+        }
+
+        // tradeId: (await bcrypt.hash(new Date().toString(), 10)).toString(),
+        // tradeStatus: "pedding"
+        // tradeTitle: "Buy products"
+        // buyer: string user
+        // seller: string userSellId
+        // sellerAccept: boolean false 
+
+
+
+
+
+        //
+    }
 
     @Public()
     @Post("cancel")
@@ -50,6 +87,7 @@ export class TradeController {
 
 
     async updateCancel(handleCancel: any) {
+        //hoan credit ve ng mua
         await this.wallerService.increBalance({ user: handleCancel.tradeItem.userId, balance: handleCancel.total })
         await this.productsService.calcProduct(handleCancel.tradeItem.productId, -handleCancel.tradeItem.numberProduct)
         await this.classifyService.updateClassifyByIdClassify(handleCancel.tradeItem.classifyId, handleCancel.tradeItem.numberProduct)

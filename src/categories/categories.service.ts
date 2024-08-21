@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Categories, CategoriesDocument } from './schema/categories.schema';
 import { Model } from 'mongoose';
+import { CategoriesDTO } from './dto/categories.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -10,8 +11,8 @@ export class CategoriesService {
         private readonly model: Model<CategoriesDocument>
     ) { }
 
-    async add(cateName: string): Promise<Categories> {
-        return await new this.model({ categoriesName: cateName }).save()
+    async add(cateName: CategoriesDTO): Promise<Categories> {
+        return await new this.model(cateName).save()
     }
 
     async getAll(): Promise<Categories[]> {

@@ -4,7 +4,7 @@ export class ProductsDTO {
     brand: string
     selled: number
     dateUp: Date
-    userup: string
+    seller: string
 
 }
 
@@ -12,7 +12,7 @@ export class SellProductsDTO {
     productId: string
     classifyId: string
     numberProduct: number
-    userId: string
+    buyer: string
 }
 
 export class ProductsSearchStringDTO {

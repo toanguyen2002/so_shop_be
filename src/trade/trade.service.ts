@@ -3,20 +3,16 @@ import mongoose, { Model } from 'mongoose';
 import { Trade, TradeDocument } from './schema/trade.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { TradeDTO } from './dto/trade.dto';
-import { HistoryService } from 'src/history/history.service';
-import { ProductsService } from 'src/products/products.service';
-
 @Injectable()
 export class TradeService {
-    constructor(@InjectModel(Trade.name) private readonly model: Model<TradeDocument>,
-
-    ) { }
+    constructor(@InjectModel(Trade.name) private readonly model: Model<TradeDocument>,) { }
     async addTrade(tradeDTO: TradeDTO): Promise<Trade> {
+
         return await new this.model(tradeDTO).save()
     }
     async getTradeBySellerId(tradeDTO: TradeDTO): Promise<Trade[]> {
         return await this.model.aggregate(([{
-            $match: { sellby: new mongoose.Types.ObjectId(tradeDTO.sellby) }
+            $match: { seller: new mongoose.Types.ObjectId(tradeDTO.seller) }
         }]))
     }
     async getTradeByTradeId(tradeDTO: TradeDTO): Promise<any> {
@@ -44,7 +40,6 @@ export class TradeService {
         const trade = await this.model.aggregate(([{
             $match: { buyer: new mongoose.Types.ObjectId(tradeid) }
         }]))[0]
-        console.log();
         return null
     }
 }

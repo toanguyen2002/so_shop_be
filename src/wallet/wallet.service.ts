@@ -32,8 +32,6 @@ export class WalletService {
             rs[0].balance += walletDTO.balance
             await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
         }
-        console.log(rs);
-
         return rs[0]
     }
 
@@ -42,6 +40,8 @@ export class WalletService {
         const rs = await this.model.aggregate([
             { $match: { user: new mongoose.Types.ObjectId(walletDTO.user) } }
         ])
+        console.log(rs);
+
         if (rs.length > 0) {
             if (walletDTO.balance <= rs[0].balance) {
                 rs[0].balance -= walletDTO.balance

@@ -14,7 +14,7 @@ export class Trade {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Users" })
     buyer: Users
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Users" })
-    sellby: Users
+    seller: Users
     @Prop()
     sellerAccept: boolean
 

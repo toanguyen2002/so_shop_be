@@ -3,6 +3,7 @@ export class TradeDTO {
     tradeStatus: string
     tradeTitle: String
     buyer: string
-    sellby: string
+    seller: string
     sellerAccept: boolean
+    products: any
 }

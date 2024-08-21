@@ -8,11 +8,11 @@ import { Role } from 'src/users/enum/role.enum';
 export class CategoriesController {
     constructor(private readonly cateService: CategoriesService) { }
 
-    // @Public()
+    @Public()
     @Roles(Role.ADMIN)
     @Post("/add")
     async addCate(@Body() cateDTO: CategoriesDTO) {
-        return await this.cateService.add(cateDTO.categoriesName);
+        return await this.cateService.add(cateDTO);
     }
     @Public()
     @Get("/allCate")
