@@ -2,10 +2,8 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 import { Categories } from "src/categories/schema/categories.schema";
 import * as mongoose from 'mongoose';
-import { Medias } from "src/media/schema/media.schema";
-import { Attributes } from "src/attributes/schema/attributes.schema";
-import { Classify } from "src/classify/schema/classify.schema";
-import { Rattings } from "src/rattings/schema/rattings.schema";
+
+import { Users } from "src/users/schema/user.schema";
 
 
 export type ProductsDocument = Products & Document;
@@ -18,6 +16,8 @@ export class Products {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Categories' })
     cate: Categories
 
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Users' })
+    user: Users
 
     //samsung 
     @Prop({ required: true })
@@ -45,3 +45,6 @@ export class Products {
 }
 
 export const ProductsSchema = SchemaFactory.createForClass(Products);
+// ProductsSchema.index({ productName: 'text' });
+// ProductsSchema.index({ brand: 'text' });
+//  { ProductsSchema }

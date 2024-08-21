@@ -18,6 +18,9 @@ export class Users {
     role: Role[]
     @Prop()
     address: String
+    @Prop()
+    sex: string
+
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);

@@ -6,4 +6,9 @@ import { Model } from 'mongoose';
 @Injectable()
 export class CartService {
     constructor(@InjectModel(Cart.name) private readonly model: Model<CartDocuemnt>) { }
+
+
+    async addCart(): Promise<any> {
+
+    }
 }

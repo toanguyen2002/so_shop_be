@@ -24,6 +24,9 @@ import { AttributesController } from './attributes/attributes.controller';
 import { AttributesModule } from './attributes/attributes.module';
 import { HistoryController } from './history/history.controller';
 import { HistoryModule } from './history/history.module';
+import { TradeController } from './trade/trade.controller';
+import { TradeService } from './trade/trade.service';
+import { TradeModule } from './trade/trade.module';
 
 @Module({
   imports: [
@@ -45,6 +48,7 @@ import { HistoryModule } from './history/history.module';
       signOptions: { expiresIn: '3600s' },
     }),
     HistoryModule,
+    TradeModule,
     // S3Module.forRoot({
     //   config: {
     //     credentials: {
@@ -67,6 +71,7 @@ import { HistoryModule } from './history/history.module';
     MediaController,
     AttributesController,
     HistoryController,
+    TradeController,
   ],
   providers:
     [AppService,
@@ -74,6 +79,7 @@ import { HistoryModule } from './history/history.module';
         provide: APP_GUARD,
         useClass: UserGuard,
       },
+      // TradeService,
       // ProductsService,
       // CartService,
       // CategoriesService,

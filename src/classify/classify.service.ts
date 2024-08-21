@@ -21,8 +21,13 @@ export class ClassifyService {
     async updateClassify(classifyđTO: ClassifyDTO): Promise<Classify> {
         const classify = await this.model.aggregate([{ $match: { product: new mongoose.Types.ObjectId(classifyđTO.product) } }])
 
-        classify[0].stock += 100
+        classify[0].stock += classifyđTO.stock
         return await this.model.findByIdAndUpdate(classify[0]._id, classify[0])
+    }
+    async updateClassifyByIdClassify(id: string, calc: number): Promise<Classify> {
+        const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id) } }])
+        classify[0].stock += calc
+        return await this.model.findByIdAndUpdate(id, classify[0])
     }
     async getOnelassifyById(id: string): Promise<Classify> {
         return await this.model.findById(id)
