@@ -82,8 +82,13 @@ export class CartService {
                 if (cart[0].products[i].seller == seller) {
                     let lengthItem = await cart[0]?.products[i]?.items?.length;
                     for (let j = 0; j < lengthItem; j++) {
+                        console.log(cart[0].products[i].items.length);
+
                         if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
                             cart[0].products[i].items.splice(j, 1)
+                            if (cart[0].products[i].items.length == 0) {
+                                cart[0].products.splice(i, 1)
+                            }
                             return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
                         }
                     }
