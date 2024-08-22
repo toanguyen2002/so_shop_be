@@ -48,6 +48,51 @@ export class CartService {
         }
     }
 
+    async removeCart(buyer: string, seller: string, item: any): Promise<Cart> {
+        const cart = await this.model.aggregate([
+            { $match: { buyer: new mongoose.Types.ObjectId(buyer) } }
+        ])
+        if (cart.length > 0) {
+            for (let i = 0; i < cart[0].products.length; i++) {
+                if (cart[0].products[i].seller == seller) {
+                    let lengthItem = await cart[0]?.products[i]?.items?.length;
+                    for (let j = 0; j < lengthItem; j++) {
+                        if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
+                            this.calcUpdate(item)
+                            if (cart[0].products[i].items[j].numberProduct - item.numberProduct <= 0) {
+                                cart[0].products[i].items.splice(j, 1)
+                                return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                            }
+                            cart[0].products[i].items[j].numberProduct -= item.numberProduct
+                            return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                        }
+                    }
+                }
+            }
+        }
+
+        return null
+    }
+    async removeItemsAfterTrade(buyer: string, seller: string, item: any): Promise<any> {
+        const cart = await this.model.aggregate([
+            { $match: { buyer: new mongoose.Types.ObjectId(buyer) } }
+        ])
+        if (cart.length > 0) {
+            for (let i = 0; i < cart[0].products.length; i++) {
+                if (cart[0].products[i].seller == seller) {
+                    let lengthItem = await cart[0]?.products[i]?.items?.length;
+                    for (let j = 0; j < lengthItem; j++) {
+                        if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
+                            cart[0].products[i].items.splice(j, 1)
+                            return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
     async getCartByBuyerId(id: string): Promise<Cart> {
         const rs = await this.model.aggregate([{ $match: { buyer: new mongoose.Types.ObjectId(id) } }])
         return rs[0];

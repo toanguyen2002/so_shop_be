@@ -21,7 +21,14 @@ export class WalletService {
         const rs = await this.model.aggregate([
             { $match: { user: new mongoose.Types.ObjectId(walletDTO.user) } }
         ])
-        return rs[0]
+        if (rs.length > 0) {
+            return rs[0]
+        } else {
+            return await new this.model({
+                balance: 0,
+                user: walletDTO.user
+            }).save()
+        }
     }
 
     async increBalance(walletDTO: WallerDTO): Promise<Wallet> {

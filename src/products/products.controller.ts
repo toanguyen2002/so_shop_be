@@ -25,11 +25,11 @@ export class ProductsController {
     }
 
     //66c1b3c185effdfab8c1bdfc
-    @Public()
-    @Post('/sell')
-    async sellProducts(@Body() sellProductsDTO: SellProductsDTO) {
-        return await this.productService.sellProduct(sellProductsDTO)
-    }
+    // @Public()
+    // @Post('/sell')
+    // async sellProducts(@Body() sellProductsDTO: SellProductsDTO) {
+    //     return await this.productService.sellProduct(sellProductsDTO)
+    // }
 }
 
 

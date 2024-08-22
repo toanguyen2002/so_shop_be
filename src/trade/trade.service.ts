@@ -42,4 +42,9 @@ export class TradeService {
         }]))[0]
         return null
     }
+
+    async handleTradeSaction(tradeDTO: TradeDTO): Promise<Trade> {
+        console.log(tradeDTO);
+        return null
+    }
 }

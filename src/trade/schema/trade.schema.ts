@@ -7,16 +7,31 @@ export type TradeDocument = Trade & Document
 export class Trade {
     @Prop({ unique: true, required: true })
     tradeId: string
-    @Prop()
-    tradeStatus: string
-    @Prop()
-    tradeTitle: String
+
+
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Users" })
     buyer: Users
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Users" })
     seller: Users
+
     @Prop()
     sellerAccept: boolean
+    @Prop()
+    tradeStatus: boolean
+    @Prop()
+    payment: boolean
+
+
+    @Prop()
+    tradeTitle: String
+    @Prop()
+    balence: number
+
+
+    @Prop({
+        type: mongoose.Schema.Types.Mixed
+    })
+    products: any
 
 }
 

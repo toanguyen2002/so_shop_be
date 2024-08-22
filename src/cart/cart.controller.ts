@@ -14,6 +14,13 @@ export class CartController {
         return await this.cartService.addCart(buyer, seller, payload)
     }
 
+    @Public()
+    @Post("/remove")
+    async removeCart(@Body() cartDTO: CartDTO) {
+        const { buyer, seller, ...payload } = cartDTO
+        return await this.cartService.removeCart(buyer, seller, payload)
+    }
+
 
     @Public()
     @Get("/:id")

@@ -70,6 +70,10 @@ export class ClassifyService {
     }
     async calcClassify(id: string, calcClassify: number): Promise<any> {
         const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id.toString()) } }])
+        if (calcClassify < 0 && classify[0].stock + calcClassify < 0) {
+
+            return false
+        }
         classify[0].stock = classify[0].stock + calcClassify
         return await this.model.findByIdAndUpdate(id, classify[0])
     }

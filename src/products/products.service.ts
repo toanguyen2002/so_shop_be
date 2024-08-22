@@ -52,64 +52,60 @@ export class ProductsService {
         products[0].selled = products[0].selled + calcProduct
         return await this.model.findByIdAndUpdate(id, products[0])
     }
-    async sellProduct(sellProductsDTO: SellProductsDTO): Promise<any> {
+    // async sellProduct(sellProductsDTO: SellProductsDTO): Promise<any> {
+    //     const classify = await this.classifyService.getOnelassifyById(sellProductsDTO.classifyId)
+    //     const balance = await this.walletService.getBalance({ user: sellProductsDTO.buyer, balance: 0 })
+    //     const totalBalence = classify.price * sellProductsDTO.numberProduct
+    //     if (classify.stock >= sellProductsDTO.numberProduct) {
+    //         if (balance.balance >= totalBalence) {
+    //             const decreBalence = await this.walletService.dereBalance({ user: sellProductsDTO.buyer, balance: totalBalence })
+    //             const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
+    //             if (decreBalence) {
+    //                 if (updateClassify) {
+    //                     const products = await this.calcProduct(sellProductsDTO.productId, sellProductsDTO.numberProduct)
+    //                     const trade = await this.TradeService.addTrade(
+    //                         {
+    //                             tradeStatus: false,
+    //                             buyer: sellProductsDTO.buyer.toString(),
+    //                             seller: products.seller.toString(),
+    //                             tradeId: "GD" + Math.random().toString(),
+    //                             tradeTitle: "buy products",
+    //                             sellerAccept: false,
+    //                             products: [],
+    //                             balence: 0
+    //                         })
+    //                     await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, buyHis: trade.buyer.toString() });
 
-        const classify = await this.classifyService.getOnelassifyById(sellProductsDTO.classifyId)
-        const balance = await this.walletService.getBalance({ user: sellProductsDTO.buyer, balance: 0 })
+    //                     return {
+    //                         type: true,
+    //                         Code: "Thanh Toán Thành Công Sản Phẩm"
+    //                     };
+    //                 } else {
+    //                     return {
+    //                         type: false,
+    //                         Code: "Thanh Toán Thất Bại Vì Sản Phẩm Không Đủ"
+    //                     };
+    //                 }
+    //             } else {
+    //                 return {
+    //                     type: false,
+    //                     Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
+    //                 };
+    //             }
+    //         } else {
+    //             return {
+    //                 type: false,
+    //                 Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
+    //             };
+    //         }
+    //     } else {
+    //         return {
+    //             type: false,
+    //             Code: "Sản Phẩm Không Đủ Hàng"
+    //         };
+    //     }
 
-
-        const totalBalence = classify.price * sellProductsDTO.numberProduct
-
-        if (classify.stock >= sellProductsDTO.numberProduct) {
-            if (balance.balance >= totalBalence) {
-                const decreBalence = await this.walletService.dereBalance({ user: sellProductsDTO.buyer, balance: totalBalence })
-                const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
-                if (decreBalence) {
-                    if (updateClassify) {
-                        const products = await this.calcProduct(sellProductsDTO.productId, sellProductsDTO.numberProduct)
-                        const trade = await this.TradeService.addTrade(
-                            {
-                                tradeStatus: "pendding",
-                                buyer: sellProductsDTO.buyer.toString(),
-                                seller: products.seller.toString(),
-                                tradeId: (await bcrypt.hash(new Date().toString(), 10)).toString(),
-                                tradeTitle: "Buy Products",
-                                sellerAccept: false,
-                                products: []
-                            })
-                        await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, buyHis: trade.buyer.toString() });
-
-                        return {
-                            type: true,
-                            Code: "Thanh Toán Thành Công Sản Phẩm"
-                        };
-                    } else {
-                        return {
-                            type: false,
-                            Code: "Thanh Toán Thất Bại Vì Sản Phẩm Không Đủ"
-                        };
-                    }
-                } else {
-                    return {
-                        type: false,
-                        Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
-                    };
-                }
-            } else {
-                return {
-                    type: false,
-                    Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
-                };
-            }
-        } else {
-            return {
-                type: false,
-                Code: "Sản Phẩm Không Đủ Hàng"
-            };
-        }
-
-    }
-    async sellAnyProducts() { }
+    // }
     async getProductById(id: string): Promise<any> {
         // console.log(id);
         return await this.model.aggregate([{
