@@ -21,8 +21,6 @@ export class ProductsService {
         private readonly TradeService: TradeService,
         private readonly historyService: HistoryService
     ) { }
-
-
     async addProducts(productsDto: ProductsDTO): Promise<Products> {
         try {
             return await new this.model({

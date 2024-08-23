@@ -10,6 +10,7 @@ import { ClassifyService } from 'src/classify/classify.service';
 import { CartService } from 'src/cart/cart.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
+import { MailerService } from '@nestjs-modules/mailer';
 @Controller('trade')
 export class TradeController {
     constructor(
@@ -17,9 +18,10 @@ export class TradeController {
         private readonly tradeService: TradeService,
         private readonly historyService: HistoryService,
         @Inject(forwardRef(() => ProductsService))
-        private productsService: ProductsService,
-        private classifyService: ClassifyService,
-        private cartsService: CartService,
+        private readonly productsService: ProductsService,
+        private readonly classifyService: ClassifyService,
+        private readonly cartsService: CartService,
+        private readonly mailService: MailerService
 
 
     ) { }
@@ -79,7 +81,6 @@ export class TradeController {
                             payment: false,//true thì tiền về seller
                             balence: item.balanceEach,
                         })
-                        // removeItemsAfterTrade(buyer: string, seller: string, item: any
                     }
                 }))
                 return {
@@ -102,29 +103,33 @@ export class TradeController {
     }
 
     @Public()
-    @Post("cancel")
-    async handleCancelTradeByTradeId(@Body() tradeDTO: TradeDTO) {
-        const trade = await this.tradeService.getTradeByTradeId(tradeDTO)
-        const his = await this.historyService.getHistoriesByTradeId(tradeDTO.tradeId)
-        switch (tradeDTO.tradeStatus) {
-            case false:
-                switch (typeof trade[0].histories[0].tradeItem) {
-                    case "object":
-                        this.updateCancel(trade[0].histories[0])
-                        break
-                    default:
-                        console.log("array");
-                }
-                break;
-            case true:
-                console.log("success");
-                break;
-            default:
-                console.log("pedding");
-
-        }
-        return trade[0]
+    @Post("accept")
+    async acceptTrade(@Body() tradeDTO: TradeDTO) {
+        return await this.tradeService.acceptTrade(tradeDTO)
     }
+
+    @Public()
+    @Post("payment")
+    async paymentTrade(@Body() tradeDTO: TradeDTO) {
+        // console.log(tradeDTO);
+        await this.tradeService.paymentTrade(tradeDTO)
+        this.wallerService.increBalance({ user: tradeDTO.seller, balance: tradeDTO.balence })
+        return
+
+    }
+
+    @Public()
+    @Post("cancel")
+    async cancelTrade(@Body() tradeDTO: TradeDTO) {
+        console.log(this.mailService);
+        console.log(process.env.MAIL_USERNAME);
+
+
+        // this.wallerService.increBalance({ user: tradeDTO.buyer, balance: tradeDTO.balence })
+        // return await this.tradeService.cancelTrade(tradeDTO)
+
+    }
+
     async calcItem(items: any): Promise<any> {
         await Promise.all(items.map(async (item: { productId: string; numberProduct: number; classifyId: string; }) => {
             try {

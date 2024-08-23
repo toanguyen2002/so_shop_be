@@ -25,8 +25,10 @@ import { AttributesModule } from './attributes/attributes.module';
 import { HistoryController } from './history/history.controller';
 import { HistoryModule } from './history/history.module';
 import { TradeController } from './trade/trade.controller';
-import { TradeService } from './trade/trade.service';
 import { TradeModule } from './trade/trade.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -60,7 +62,25 @@ import { TradeModule } from './trade/trade.module';
     //     forcePathStyle: true,
 
     //   },
-    // })
+    // }),
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: 'smtps://user@domain.com:pass@smtp.domain.com',
+        defaults: {
+          from: '"nest-modules" <modules@nestjs.com>',
+        },
+        template: {
+          dir: __dirname + '/templates',
+          adapter: new PugAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+    }),
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    })
   ],
   controllers: [
     AppController,

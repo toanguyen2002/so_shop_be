@@ -16,7 +16,6 @@ export class TradeService {
         }]))
     }
     async getTradeByTradeId(tradeDTO: TradeDTO): Promise<any> {
-
         return await this.model.aggregate(([{
             $match: { tradeId: tradeDTO.tradeId.toString() }
         },
@@ -36,15 +35,51 @@ export class TradeService {
         }]))[0]
     }
 
-    async cancelTrade(tradeid: string): Promise<Trade> {
+    async cancelTrade(tradeDTO: TradeDTO): Promise<Trade> {
+        // console.log(tradeDTO);
         const trade = await this.model.aggregate(([{
-            $match: { buyer: new mongoose.Types.ObjectId(tradeid) }
-        }]))[0]
-        return null
+            $match: { buyer: new mongoose.Types.ObjectId(tradeDTO.buyer), tradeId: tradeDTO.tradeId }
+        }]))
+        trade[0].tradeStatus = false
+        console.log(trade[0]);
+
+        return await this.model.findByIdAndUpdate(trade[0]._id, trade[0])
     }
 
-    async handleTradeSaction(tradeDTO: TradeDTO): Promise<Trade> {
-        console.log(tradeDTO);
-        return null
+    async getTradeById(tradeDTO: TradeDTO): Promise<Trade> {
+        const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
+        if (rs.length == 0) {
+            return
+        }
+        return rs[0]
     }
+
+    async acceptTrade(tradeDTO: TradeDTO): Promise<any> {
+        const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
+        if (rs[0].sellerAccept) {
+            return false
+        }
+
+        rs[0].sellerAccept = true
+        return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
+    }
+
+    async updateStatusTrade(tradeDTO: TradeDTO): Promise<any> {
+        const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
+        if (rs[0].tradeStatus) {
+            rs[0].tradeStatus = false
+            return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
+        }
+        return false
+    }
+
+    async paymentTrade(tradeDTO: TradeDTO): Promise<any> {
+        const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
+        if (rs[0].payment) {
+            return false
+        }
+        rs[0].payment = true
+        return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
+    }
+
 }

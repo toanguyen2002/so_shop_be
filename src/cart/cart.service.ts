@@ -37,7 +37,6 @@ export class CartService {
             items.push(item)
             cart[0].products.push({ seller: seller, items: items })
             this.calcUpdate(item)
-
             return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
         } else {
             const products = []
@@ -83,7 +82,6 @@ export class CartService {
                     let lengthItem = await cart[0]?.products[i]?.items?.length;
                     for (let j = 0; j < lengthItem; j++) {
                         console.log(cart[0].products[i].items.length);
-
                         if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
                             cart[0].products[i].items.splice(j, 1)
                             if (cart[0].products[i].items.length == 0) {
