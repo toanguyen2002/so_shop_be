@@ -7,6 +7,7 @@ import { ClassifyModule } from 'src/classify/classify.module';
 import { WalletModule } from 'src/wallet/wallet.module';
 import { TradeModule } from 'src/trade/trade.module';
 import { HistoryModule } from 'src/history/history.module';
+import { AwsModule } from 'src/aws/aws.module';
 
 @Module({
     providers: [ProductsService],
@@ -16,8 +17,8 @@ import { HistoryModule } from 'src/history/history.module';
         ClassifyModule,
         WalletModule,
         forwardRef(() => TradeModule),
-        HistoryModule
-
+        HistoryModule,
+        AwsModule
     ],
     exports: [ProductsService],
 })

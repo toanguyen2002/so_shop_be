@@ -1,4 +1,4 @@
-import { Body, Controller, forwardRef, Inject, Post } from '@nestjs/common';
+import { Body, Controller, forwardRef, Inject, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { TradeDTO } from './dto/trade.dto';
 import { HistoryService } from 'src/history/history.service';
 import { TradeService } from './trade.service';
@@ -11,6 +11,9 @@ import { CartService } from 'src/cart/cart.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UsersService } from 'src/users/users.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 @Controller('trade')
 export class TradeController {
     constructor(
@@ -21,7 +24,9 @@ export class TradeController {
         private readonly productsService: ProductsService,
         private readonly classifyService: ClassifyService,
         private readonly cartsService: CartService,
-        private readonly mailService: MailerService
+        private readonly mailService: MailerService,
+        private readonly userService: UsersService,
+
 
 
     ) { }
@@ -31,17 +36,6 @@ export class TradeController {
     async cartTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
         for (let index = 0; index < tradeDTO.products.length; index++) {
             console.log(tradeDTO.products[index]);
-            // const trade = await this.tradeService.addTrade(
-            //     {
-            //         tradeStatus: "pendding",
-            //         buyer: tradeDTO.buyer.toString(),
-            //         seller: tradeDTO.products[index].userSellId.toString(),
-            //         tradeId: (await bcrypt.hash(new Date().toString(), 10)).toString(),
-            //         tradeTitle: "buy products at " + new Date().getDate() + "/" + new Date().getMonth() + "/" + new Date().getFullYear(),
-            //         sellerAccept: false,
-            //         products: undefined
-            //     })
-            // await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, userHis: trade.buyer.toString() });
         }
     }
 
@@ -96,9 +90,9 @@ export class TradeController {
 
 
         } else {
-            console.log(tradeDTO.products.productId);
-            console.log(tradeDTO.products.classifyId);
-            console.log(tradeDTO.products.numberProduct);
+            // console.log(tradeDTO.products.productId);
+            // console.log(tradeDTO.products.classifyId);
+            // console.log(tradeDTO.products.numberProduct);
         }
     }
 
@@ -111,6 +105,7 @@ export class TradeController {
     @Public()
     @Post("payment")
     async paymentTrade(@Body() tradeDTO: TradeDTO) {
+
         // console.log(tradeDTO);
         await this.tradeService.paymentTrade(tradeDTO)
         this.wallerService.increBalance({ user: tradeDTO.seller, balance: tradeDTO.balence })
@@ -121,13 +116,8 @@ export class TradeController {
     @Public()
     @Post("cancel")
     async cancelTrade(@Body() tradeDTO: TradeDTO) {
-        console.log(this.mailService);
-        console.log(process.env.MAIL_USERNAME);
-
-
-        // this.wallerService.increBalance({ user: tradeDTO.buyer, balance: tradeDTO.balence })
-        // return await this.tradeService.cancelTrade(tradeDTO)
-
+        this.wallerService.increBalance({ user: tradeDTO.buyer, balance: tradeDTO.balence })
+        return await this.tradeService.cancelTrade(tradeDTO)
     }
 
     async calcItem(items: any): Promise<any> {
@@ -184,4 +174,30 @@ export class TradeController {
         await this.productsService.calcProduct(handleCancel.tradeItem.productId, -handleCancel.tradeItem.numberProduct)
         await this.classifyService.updateClassifyByIdClassify(handleCancel.tradeItem.classifyId, handleCancel.tradeItem.numberProduct)
     }
+    sendEmail(typeEmail: string, tradeDTO: TradeDTO) {
+        this.userService.getprofile(tradeDTO.buyer)
+        this.mailService
+            .sendMail({
+                to: 'toanguyen200220@gmail.com', // list of receivers
+                from: 'noreply@osshop.com', // sender address
+                subject: 'Testing Nest MailerModule ✔', // Subject line
+                text: 'welcome', // plaintext body
+                // html: this.templateCancel({ name: "OS Shop", tradeId: tradeDTO.tradeId }), // HTML body content
+                html: `
+                    <div class="content">
+                    <p>Dear You"}</p>
+
+            <p>confirm that your order #[${tradeDTO.tradeId}] has been successfully canceled as per your request. We apologize for any inconvenience this may have caused and are here to assist you with any future needs.</p>
+
+            <p>If payment has already been processed, a refund will be issued to your original payment method within 7 business days. You will receive a confirmation email once the refund has been processed.</p>
+
+            <p>If you have any further questions or need additional assistance, please feel free to contact us at htkh@ó.shop or 099 900 9999.</p>
+
+            <p>Thank you for choosing us. We look forward to serving you in the future.</p>
+
+            <p>Sincerely</p>
+        </div>`
+            })
+    }
+
 }

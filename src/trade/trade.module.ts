@@ -9,6 +9,7 @@ import { WalletModule } from 'src/wallet/wallet.module';
 import { ProductsModule } from 'src/products/products.module';
 import { ClassifyModule } from 'src/classify/classify.module';
 import { CartModule } from 'src/cart/cart.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
     controllers: [TradeController],
@@ -19,7 +20,8 @@ import { CartModule } from 'src/cart/cart.module';
         HistoryModule,
         forwardRef(() => ProductsModule),
         ClassifyModule,
-        CartModule
+        CartModule,
+        UsersModule
 
 
     ],

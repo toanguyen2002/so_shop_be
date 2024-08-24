@@ -11,6 +11,8 @@ import { error } from 'console';
 import { TradeService } from 'src/trade/trade.service';
 import * as bcrypt from 'bcrypt';
 import { HistoryService } from 'src/history/history.service';
+// import { AwsService } from 'src/aws/aws.service';
+
 @Injectable()
 export class ProductsService {
     constructor(
@@ -19,9 +21,11 @@ export class ProductsService {
         private readonly walletService: WalletService,
         @Inject(forwardRef(() => TradeService))
         private readonly TradeService: TradeService,
-        private readonly historyService: HistoryService
+        private readonly historyService: HistoryService,
+        // private readonly aws: AwsService
     ) { }
     async addProducts(productsDto: ProductsDTO): Promise<Products> {
+
         try {
             return await new this.model({
                 productName: productsDto.productName,
@@ -29,7 +33,7 @@ export class ProductsService {
                 brand: productsDto.brand,
                 selled: 0,
                 dateUp: Date.now(),
-                seller: productsDto.seller
+                seller: productsDto.seller,
             }).save()
         } catch (error) {
             throw new ExceptionsHandler

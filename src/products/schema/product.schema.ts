@@ -29,7 +29,8 @@ export class Products {
     @Prop({ required: true })
     dateUp: Date
 
-
+    @Prop()
+    images: string[]
     //img1,img2,img3
     // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Medias' }] })
     // media: Medias[]
@@ -45,6 +46,3 @@ export class Products {
 }
 
 export const ProductsSchema = SchemaFactory.createForClass(Products);
-// ProductsSchema.index({ productName: 'text' });
-// ProductsSchema.index({ brand: 'text' });
-//  { ProductsSchema }

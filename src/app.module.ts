@@ -29,6 +29,8 @@ import { TradeModule } from './trade/trade.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ConfigModule } from '@nestjs/config';
+import { AwsService } from './aws/aws.service';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -54,33 +56,35 @@ import { ConfigModule } from '@nestjs/config';
     // S3Module.forRoot({
     //   config: {
     //     credentials: {
-    //       accessKeyId: 'minio',
-    //       secretAccessKey: 'password',
+    //       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     //     },
-    //     region: "",
+    //     region: "us-east-1",
     //     endpoint: '*',
     //     forcePathStyle: true,
 
     //   },
-    // }),
+    // })
+    // ,
     MailerModule.forRootAsync({
-      useFactory: () => ({
-        transport: 'smtps://user@domain.com:pass@smtp.domain.com',
-        defaults: {
-          from: '"nest-modules" <modules@nestjs.com>',
-        },
-        template: {
-          dir: __dirname + '/templates',
-          adapter: new PugAdapter(),
-          options: {
-            strict: true,
-          },
-        },
-      }),
+      imports: [ConfigModule],
+      useFactory: async () => (
+        {
+          transport: {
+            host: 'smtp.gmail.com',
+            secure: false,
+            auth: {
+              user: process.env.MAIL_USERNAME,
+              pass: process.env.MAIL_PASSWORD,
+            },
+          }
+        }
+      )
     }),
     ConfigModule.forRoot({
       envFilePath: '.env',
-    })
+    }),
+    AwsModule
   ],
   controllers: [
     AppController,
@@ -99,6 +103,7 @@ import { ConfigModule } from '@nestjs/config';
         provide: APP_GUARD,
         useClass: UserGuard,
       },
+      // AwsService,
       // TradeService,
       // ProductsService,
       // CartService,
