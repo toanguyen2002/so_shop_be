@@ -5,13 +5,16 @@ import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { UserDTO } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
+import { Exception } from 'handlebars/runtime';
+import { MailerService } from '@nestjs-modules/mailer';
 
 export type User = any;
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel(Users.name) private readonly model: Model<UsersDocument>,
-        private jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly mailer: MailerService
     ) { }
     async signIn(
         userName: string,
@@ -65,13 +68,51 @@ export class UsersService {
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
         const hash = await bcrypt.hash(userDTO.password, 10);
         userDTO.password = hash
-        console.log(userDTO);
         const { password, ...payload } = userDTO
         try {
             await this.model.findByIdAndUpdate(userDTO.id, userDTO)
             return payload
         } catch (error) {
             throw new error
+        }
+    }
+
+
+    async resetPassWord(userDTO: UserDTO): Promise<User> {
+        let newPass = ""
+        for (let index = 0; index < 5; index++) {
+            newPass += Math.floor(Math.random() * 10).toString()
+        }
+        const hash = await bcrypt.hash(newPass, 10);
+        const existUser = await this.model.aggregate([{
+            $match: { userName: userDTO.userName }
+        }])
+        console.log(existUser);
+        if (existUser.length > 0) {
+            console.log(await bcrypt.compare(newPass, hash));
+            existUser[0].password = hash
+            await this.model.findByIdAndUpdate(existUser[0]._id, existUser[0])
+            await this.mailer
+                .sendMail({
+                    to: 'toanguyen200220@gmail.com', // list of receivers
+                    from: 'noreply@osshop.com', // sender address
+                    subject: 'Reset Password', // Subject line
+                    text: 'Dear', // plaintext body
+                    // html: this.templateCancel({ name: "OS Shop", tradeId: tradeDTO.tradeId }), // HTML body content
+                    html: `
+                    <div class="content">
+                    <p>Dear You</p>
+
+                <p>confirm that your order reset your password</p>
+
+                <p>${newPass} is your new password</p>
+
+                <p>Sincerely</p>
+        </div>`
+                })
+            return newPass
+        } else {
+            throw new Exception('can not exist!')
         }
     }
 }

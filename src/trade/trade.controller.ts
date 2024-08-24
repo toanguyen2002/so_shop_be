@@ -66,7 +66,7 @@ export class TradeController {
                         this.wallerService.dereBalance({ user: tradeDTO.buyer, balance: item.balanceEach })
                         this.tradeService.addTrade({
                             tradeId: "TD" + randomUUID(),
-                            tradeTitle: "trade mua hàng",
+                            tradeTitle: "Mua hàng",
                             buyer: tradeDTO.buyer,
                             seller: item.seller,
                             products: item.items,

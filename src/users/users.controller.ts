@@ -23,6 +23,15 @@ export class UsersController {
         return rs
     }
 
+
+    @Public()
+    @Post("/reset")
+    async reset(@Body() userDTO: UserDTO) {
+        const rs = await this.service.resetPassWord(userDTO)
+        return rs
+    }
+
+
     @Roles(Role.BUYER)
     @Get('profile')
     async getByUserName(@Request() req) {
