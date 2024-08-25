@@ -100,7 +100,7 @@ export class UsersService {
             await this.model.findByIdAndUpdate(existUser[0]._id, existUser[0])
             await this.mailer
                 .sendMail({
-                    to: 'toanguyen200220@gmail.com', // list of receivers
+                    to: existUser[0].userName, // list of receivers
                     from: 'noreply@osshop.com', // sender address
                     subject: 'Reset Password', // Subject line
                     text: 'Dear', // plaintext body
