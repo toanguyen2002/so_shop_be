@@ -31,6 +31,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ConfigModule } from '@nestjs/config';
 import { AwsService } from './aws/aws.service';
 import { AwsModule } from './aws/aws.module';
+import { ZaloModule } from './zalo/zalo.module';
 
 @Module({
   imports: [
@@ -84,7 +85,8 @@ import { AwsModule } from './aws/aws.module';
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
-    AwsModule
+    AwsModule,
+    ZaloModule
   ],
   controllers: [
     AppController,

@@ -29,13 +29,20 @@ export class UsersService {
                 const { password, ...payload } = existUser[0]
                 return {
                     ...payload,
-                    access_token: await this.jwtService.signAsync(payload)
+                    access_token: await this.jwtService.signAsync(payload),
+                    code: 200
                 }
             } else {
-                return "Mật khẩu không chính xác"
+                return {
+                    status: "Mật khẩu không chính xác",
+                    code: 201
+                }
             }
         } else {
-            return "Tài khoản không tồn tại"
+            return {
+                status: "Tài khoản không tồn tại",
+                code: 201
+            }
         }
     }
 
@@ -87,7 +94,6 @@ export class UsersService {
         const existUser = await this.model.aggregate([{
             $match: { userName: userDTO.userName }
         }])
-        console.log(existUser);
         if (existUser.length > 0) {
             console.log(await bcrypt.compare(newPass, hash));
             existUser[0].password = hash
@@ -116,3 +122,6 @@ export class UsersService {
         }
     }
 }
+
+'1 - 1 * 5'
+'1 - 1 * 5 + 5'

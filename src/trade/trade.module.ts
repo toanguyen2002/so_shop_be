@@ -10,6 +10,7 @@ import { ProductsModule } from 'src/products/products.module';
 import { ClassifyModule } from 'src/classify/classify.module';
 import { CartModule } from 'src/cart/cart.module';
 import { UsersModule } from 'src/users/users.module';
+import { ZaloModule } from 'src/zalo/zalo.module';
 
 @Module({
     controllers: [TradeController],
@@ -21,7 +22,8 @@ import { UsersModule } from 'src/users/users.module';
         forwardRef(() => ProductsModule),
         ClassifyModule,
         CartModule,
-        UsersModule
+        UsersModule,
+        ZaloModule
 
 
     ],

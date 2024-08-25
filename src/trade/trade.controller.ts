@@ -13,6 +13,7 @@ import { randomUUID } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ZaloService } from 'src/zalo/zalo.service';
 
 @Controller('trade')
 export class TradeController {
@@ -26,6 +27,7 @@ export class TradeController {
         private readonly cartsService: CartService,
         private readonly mailService: MailerService,
         private readonly userService: UsersService,
+        private readonly zaloService: ZaloService,
 
 
 
@@ -120,6 +122,21 @@ export class TradeController {
         return await this.tradeService.cancelTrade(tradeDTO)
     }
 
+    @Public()
+    @Post("zalopayment")
+    async payment(@Body() tradeDTO: TradeDTO) {
+        return await this.zaloService.payment(tradeDTO.buyer, tradeDTO.balence, tradeDTO.tradeId);
+    }
+
+    @Public()
+    @Post("callback")
+    async callback(@Body() tradeDTO: TradeDTO) {
+        console.log("Call");
+
+        // return await this.zaloService.payment(tradeDTO.buyer, tradeDTO.balence, tradeDTO.tradeId);
+    }
+
+
     async calcItem(items: any): Promise<any> {
         await Promise.all(items.map(async (item: { productId: string; numberProduct: number; classifyId: string; }) => {
             try {
@@ -151,6 +168,7 @@ export class TradeController {
         }))
         return true
     }
+
 
     async removeItemsAfterTrade(buyer: string, seller: string, items: any): Promise<any> {
         await Promise.all(items.map(async (item: { productId: string; numberProduct: number; classifyId: string; }) => {
