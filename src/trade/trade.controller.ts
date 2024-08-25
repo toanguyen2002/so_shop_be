@@ -1,4 +1,4 @@
-import { Body, Controller, forwardRef, Inject, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, forwardRef, Get, Inject, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { TradeDTO } from './dto/trade.dto';
 import { HistoryService } from 'src/history/history.service';
 import { TradeService } from './trade.service';
@@ -130,10 +130,15 @@ export class TradeController {
 
     @Public()
     @Post("callback")
-    async callback(@Body() tradeDTO: TradeDTO) {
-        console.log("Call");
+    async callback(@Req() request: Request, @Res() respone: Response) {
+        console.log("callback");
 
-        // return await this.zaloService.payment(tradeDTO.buyer, tradeDTO.balence, tradeDTO.tradeId);
+        return await this.zaloService.callback(request, respone);
+    }
+    @Public()
+    @Get("refunds")
+    async refunds(@Body() tradeDTO: TradeDTO) {
+        return await this.zaloService.refunds(tradeDTO.buyer, tradeDTO.balence);
     }
 
 

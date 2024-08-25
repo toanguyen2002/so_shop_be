@@ -54,7 +54,10 @@ export class UsersService {
             $match: { userName: userName }
         }])
         if (existUser.length > 0) {
-            return "user đã tồn tại"
+            return {
+                status: "user đã tồn tại",
+                code: 201
+            }
         }
         const hash = await bcrypt.hash(password, 10);
         return await new this.model({
@@ -116,7 +119,11 @@ export class UsersService {
                 <p>Sincerely</p>
         </div>`
                 })
-            return newPass
+            return {
+                status: "yêu cầu thành công",
+                code: 200
+
+            }
         } else {
             throw new Exception('can not exist!')
         }
