@@ -33,17 +33,19 @@ export class TradeController {
 
     ) { }
 
-    @Public()
-    @Post("/handle")
-    async cartTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
-        for (let index = 0; index < tradeDTO.products.length; index++) {
-            console.log(tradeDTO.products[index]);
-        }
-    }
+    // @Public()
+    // @Post("/handle")
+    // async cartTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
+    //     for (let index = 0; index < tradeDTO.products.length; index++) {
+    //         console.log(tradeDTO.products[index]);
+    //     }
+    // }
 
+    //chỉ là add trade and k thanh toán
     @Public()
     @Post("/add")
     async handleAddTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
+        const tradeIds = []
         if (tradeDTO.products.length) {
             let totalBalence = 0;
             const trade = []
@@ -59,42 +61,31 @@ export class TradeController {
                 trade.push({ seller: i.seller, items: i.items, balanceEach: balanceEach })
             });
             await Promise.all(promises);
-            const wallet = await this.wallerService.getBalance({ user: tradeDTO.buyer, balance: 0 })
-            if (totalBalence <= wallet.balance) {
-                await Promise.all(trade.map(async (item: any) => {
-                    const calc = await this.calcItem(item.items)
-                    this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
-                    if (calc) {
-                        this.wallerService.dereBalance({ user: tradeDTO.buyer, balance: item.balanceEach })
-                        this.tradeService.addTrade({
-                            tradeId: "TD" + randomUUID(),
-                            tradeTitle: "Mua hàng",
-                            buyer: tradeDTO.buyer,
-                            seller: item.seller,
-                            products: item.items,
-                            sellerAccept: false, //default false => true ng bán chấp nhận và đang lien he de giao hàng
-                            tradeStatus: true,  //default true => false thì user sẽ hoàn tiền đã payment và cancel đơn hàng
-                            payment: false,//true thì tiền về seller
-                            balence: item.balanceEach,
-                        })
-                    }
-                }))
-                return {
-                    statusCode: 200,
-                    errorcontent: " Đủ Tiền Thanh Toán"
+            await Promise.all(trade.map(async (item: any) => {
+                const calc = await this.calcItem(item.items)
+                this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
+                const tradeId = "TD" + randomUUID().slice(0, 10)
+                if (calc) {
+                    const trade = await this.tradeService.addTrade({
+                        tradeId: tradeId,
+                        tradeTitle: "Mua hàng",
+                        buyer: tradeDTO.buyer,
+                        seller: item.seller,
+                        products: item.items,
+                        sellerAccept: false, //default false => true ng bán chấp nhận và đang lien he de giao hàng
+                        tradeStatus: false,  //đang thanh toán or 
+                        payment: false,//chưa thanh toán
+                        balence: item.balanceEach,
+                    })
+                    tradeIds.push(tradeId)
                 }
-            } else {
-                return {
-                    statusCode: 400,
-                    errorcontent: "Không Đủ Tiền Thanh Toán"
-                }
+
             }
-
-
-        } else {
-            // console.log(tradeDTO.products.productId);
-            // console.log(tradeDTO.products.classifyId);
-            // console.log(tradeDTO.products.numberProduct);
+            ))
+        }
+        return {
+            tradeId: tradeIds,
+            code: 200
         }
     }
 
@@ -107,8 +98,6 @@ export class TradeController {
     @Public()
     @Post("payment")
     async paymentTrade(@Body() tradeDTO: TradeDTO) {
-
-        // console.log(tradeDTO);
         await this.tradeService.paymentTrade(tradeDTO)
         this.wallerService.increBalance({ user: tradeDTO.seller, balance: tradeDTO.balence })
         return
@@ -124,8 +113,8 @@ export class TradeController {
 
     @Public()
     @Post("zalopayment")
-    async payment(@Body() tradeDTO: TradeDTO) {
-        return await this.zaloService.payment(tradeDTO.buyer, tradeDTO.balence, tradeDTO.tradeId);
+    async payment(@Body() tradeids: any) {
+        return await this.zaloService.payment(tradeids);
     }
 
     @Public()

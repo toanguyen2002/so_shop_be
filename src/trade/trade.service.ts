@@ -54,6 +54,14 @@ export class TradeService {
         return rs[0]
     }
 
+    async getTradeByStringId(id: string): Promise<Trade> {
+        const rs = await this.model.aggregate([{ $match: { tradeId: id } }])
+        if (rs.length == 0) {
+            return
+        }
+        return rs[0]
+    }
+
     async acceptTrade(tradeDTO: TradeDTO): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
         if (rs[0].sellerAccept) {
@@ -75,6 +83,15 @@ export class TradeService {
 
     async paymentTrade(tradeDTO: TradeDTO): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
+        if (rs[0].payment) {
+            return false
+        }
+        rs[0].payment = true
+        return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
+    }
+
+    async successPayment(tradeId: string): Promise<any> {
+        const rs = await this.model.aggregate([{ $match: { tradeId: tradeId } }])
         if (rs[0].payment) {
             return false
         }

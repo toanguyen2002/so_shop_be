@@ -4,10 +4,14 @@ import * as CryptoJS from 'crypto-js';
 import axios from 'axios';
 import { WalletService } from 'src/wallet/wallet.service';
 import { Refund } from 'src/trade/dto/trade.dto';
+import { TradeService } from 'src/trade/trade.service';
+import { ProductsService } from 'src/products/products.service';
 @Injectable()
 export class ZaloService {
     constructor(
-        private readonly walletService: WalletService
+        private readonly walletService: WalletService,
+        private readonly tradeService: TradeService,
+        private readonly productService: ProductsService,
     ) { }
     formatDate(date: Date) {
         let yy = date.getFullYear().toString().slice(-2);
@@ -15,7 +19,7 @@ export class ZaloService {
         let dd = date.getDate().toString().padStart(2, '0');
         return `${yy}${MM}${dd}`;
     }
-    async payment(user: string, amount: number, itemss: any) {
+    async payment(trade: any) {
         // APP INFO
         const config = {
             app_id: "2553",
@@ -23,37 +27,51 @@ export class ZaloService {
             key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
             endpoint: "https://sb-openapi.zalopay.vn/v2/create"
         };
-        const items = [{}];
+        let total = 0
+        const trades = []
+        const ids = []
+        const items = [];
+        let idTrans = ""
+        await Promise.all(
+            trade.tradeId.map(async (e: any, i: number) => {
+                idTrans += i == 0 ? `${e}` : `_${e}`
+                const trade = await this.tradeService.getTradeByStringId(e)
+                trades.push(trade)
+                total += trade.balence
+                await Promise.all(trade.products.map(async (p) => {
+                    ids.push(p)
+                }))
+            })
+        )
+        await Promise.all(ids.map(async (e) => {
+            const product = await this.productService.getProductById(e.productId)
+            items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
+        }))
         const embed_data = {};
-        console.log(itemss);
 
         const transID = Math.floor(Math.random() * 1000000);
         const order = {
             app_id: config.app_id,
             app_trans_id: `${this.formatDate(new Date)}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-            app_user: user,
+            app_user: idTrans,
             app_time: Date.now(), // miliseconds
             item: JSON.stringify(items),
             embed_data: JSON.stringify(embed_data),
-            amount: amount,
-            description: `Lazada - Payment for the order #${transID}`,
+            amount: total / 10,
+            description: `${idTrans}`,
             bank_code: "",
             mac: "",
-            callback_url: "https://5644-118-69-125-122.ngrok-free.app/trade/callback"
+            callback_url: "https://ad1a-2402-800-63b6-bf16-f937-8fb7-96f2-5485.ngrok-free.app/trade/callback"
         };
-
         // appid|app_trans_id|appuser|amount|apptime|embeddata|item
         const data = config.app_id + "|" + order.app_trans_id + "|" + order.app_user + "|" + order.amount + "|" + order.app_time + "|" + order.embed_data + "|" + order.item;
         order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
-
         try {
             const rs = await axios.post(config.endpoint, null, { params: order })
             return rs.data
         } catch (error) {
             return error
         }
-
-
     }
 
     async callback(@Req() req: any, res) {
@@ -72,8 +90,6 @@ export class ZaloService {
             let mac = CryptoJS.HmacSHA256(dataStr, config.key2).toString();
             console.log("mac =", mac);
 
-            console.log(reqMac);
-
 
             // kiểm tra callback hợp lệ (đến từ ZaloPay server)
             if (reqMac !== mac) {
@@ -86,15 +102,14 @@ export class ZaloService {
             else {
                 console.log(true);
 
-                // thanh toán thành công
-                // merchant cập nhật trạng thái cho đơn hàng
                 let dataJson = JSON.parse(dataStr, (key, value) => {
-                    // Modify the value if needed
+
                     return value;
                 });
-                console.log(dataJson);
-                console.log("update order's status = success where app_trans_id =", dataJson["app_trans_id"]);
-
+                await Promise.all(dataJson.app_user.split("_").map(async (e) => {
+                    await this.tradeService.successPayment(e)
+                }))
+                console.log("payment success");
                 result.return_code = 1;
                 result.return_message = "success";
             }
