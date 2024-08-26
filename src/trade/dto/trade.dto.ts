@@ -10,3 +10,14 @@ export class TradeDTO {
     products: any
     balence: number
 }
+
+export class Refund {
+    zp_trans_id: string
+    amount: number
+}
+
+export class QueryTrans {
+    app_id: number
+    zp_trans_id: string
+    mac: string
+}
