@@ -21,6 +21,7 @@ export class Users {
     @Prop()
     sex: string
 
+
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);

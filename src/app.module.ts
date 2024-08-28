@@ -18,8 +18,6 @@ import { CategoriesModule } from './categories/categories.module';
 import { CouponModule } from './coupon/coupon.module';
 import { WalletController } from './wallet/wallet.controller';
 import { WalletModule } from './wallet/wallet.module';
-import { MediaController } from './media/media.controller';
-import { MediaModule } from './media/media.module';
 import { AttributesController } from './attributes/attributes.controller';
 import { AttributesModule } from './attributes/attributes.module';
 import { HistoryController } from './history/history.controller';
@@ -30,6 +28,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { AwsModule } from './aws/aws.module';
 import { ZaloModule } from './zalo/zalo.module';
+import { DecriptionController } from './decription/decription.controller';
+import { DecriptionModule } from './decription/decription.module';
 
 @Module({
   imports: [
@@ -41,7 +41,6 @@ import { ZaloModule } from './zalo/zalo.module';
     CategoriesModule,
     CouponModule,
     WalletModule,
-    MediaModule,
     AttributesModule,
     // MONGO_URI=mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority
     MongooseModule.forRoot('mongodb://localhost:27017/osdtb'),
@@ -83,7 +82,8 @@ import { ZaloModule } from './zalo/zalo.module';
       envFilePath: '.env',
     }),
     AwsModule,
-    ZaloModule
+    ZaloModule,
+    DecriptionModule
   ],
   controllers: [
     AppController,
@@ -91,10 +91,10 @@ import { ZaloModule } from './zalo/zalo.module';
     CartController,
     CategoriesController,
     WalletController,
-    MediaController,
     AttributesController,
     HistoryController,
     TradeController,
+    DecriptionController,
   ],
   providers:
     [AppService,

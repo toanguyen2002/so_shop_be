@@ -27,6 +27,9 @@ export class Trade {
     @Prop()
     balence: number
 
+    @Prop()
+    address: string
+
 
     @Prop({
         type: mongoose.Schema.Types.Mixed

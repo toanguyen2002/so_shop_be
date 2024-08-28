@@ -14,11 +14,6 @@ export class ProductsController {
     ) { }
 
     @Public()
-
-
-
-
-    @Public()
     @Post("/add")
     async addProduct(@Body() productDTO: ProductsDTO) {
         return await this.productService.addProducts(productDTO)
@@ -33,12 +28,11 @@ export class ProductsController {
     @Public()
     @Get("dynamicfind")
     async handleFind(@Req() req: any) {
-        // console.log(req.query);
         const querys = []
         for (let key in req.query) {
             querys.push({ key: key, value: req.query[key] })
         }
-        return await this.productService.dynamicFind(querys, 1)
+        return await this.productService.dynamicFind(querys)
 
 
     }

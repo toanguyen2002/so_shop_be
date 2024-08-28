@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 import { Products } from "src/products/schema/product.schema";
-export type MediasDocument = Medias & Document;
+export type DecriptionDocument = Decription & Document;
 @Schema()
-export class Medias {
+export class Decription {
     @Prop()
-    typeofMedia: string
+    key: string
     @Prop()
-    urlMedia: string
+    value: string
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Products' })
     product: Products
 }
 
-export const MediasSchema = SchemaFactory.createForClass(Medias);
+export const DecriptionSchema = SchemaFactory.createForClass(Decription);

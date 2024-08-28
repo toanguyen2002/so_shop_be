@@ -9,6 +9,7 @@ export class TradeDTO {
 
     products: any
     balence: number
+    address: string
 }
 
 export class Refund {

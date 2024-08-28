@@ -54,7 +54,7 @@ export class ProductsService {
         products[0].selled = products[0].selled + calcProduct
         return await this.model.findByIdAndUpdate(id, products[0])
     }
-    async dynamicFind(dynamicValue: any, sort: any): Promise<Products[]> {
+    async dynamicFind(dynamicValue: any): Promise<Products[]> {
         const pipeline: any[] = [{
             $lookup: {
                 from: "classifies",
@@ -92,7 +92,7 @@ export class ProductsService {
                 pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[1]?.value) } })
                 break
         }
-        return this.model.aggregate(pipeline).exec();
+        return (await this.model.aggregate(pipeline).exec()).slice(0, 10);
     }
     async getProductById(id: string): Promise<any> {
         return await this.model.aggregate([{
@@ -118,10 +118,10 @@ export class ProductsService {
             }
         }, {
             $lookup: {
-                from: "medias",
+                from: "decriptions",
                 localField: "_id",
                 foreignField: "product",
-                as: "medias"
+                as: "decriptions"
             }
         },
         {
@@ -137,7 +137,7 @@ export class ProductsService {
                             selled: '$selled',
                             dateUp: '$dateUp',
                             classifies: '$classifies',
-                            medias: '$medias',
+                            decriptions: '$decriptions',
                             seller: "$seller"
                         },
                         '$attributes'
@@ -153,7 +153,7 @@ export class ProductsService {
                     selled: '$selled',
                     dateUp: '$dateUp',
                     classifies: '$classifies',
-                    medias: '$medias',
+                    decriptions: '$decriptions',
                     seller: "$seller"
 
                 },
@@ -172,7 +172,7 @@ export class ProductsService {
                 selled: "$_id.selled",
                 dateUp: "$_id.dateUp",
                 classifies: "$_id.classifies",
-                medias: '$_id.medias',
+                decriptions: '$_id.decriptions',
                 attributes: 1,
                 seller: "$_id.seller"
             }
@@ -190,7 +190,7 @@ export class ProductsService {
                             selled: '$selled',
                             dateUp: '$dateUp',
                             attributes: '$attributes',
-                            medias: '$medias',
+                            decriptions: '$decriptions',
                             seller: "$seller"
                         },
                         '$classifies'
@@ -206,7 +206,7 @@ export class ProductsService {
                     selled: '$selled',
                     dateUp: '$dateUp',
                     attributes: '$attributes',
-                    medias: '$medias',
+                    decriptions: '$decriptions',
                     seller: "$seller"
 
                 },
@@ -228,13 +228,13 @@ export class ProductsService {
                 selled: "$_id.selled",
                 dateUp: "$_id.dateUp",
                 attributes: "$_id.attributes",
-                medias: '$_id.medias',
+                decriptions: '$_id.decriptions',
                 seller: "$_id.seller",
                 classifies: 1
             }
         },
         {
-            $unwind: "$medias"
+            $unwind: "$decriptions"
         },
         {
             $replaceRoot: {
@@ -249,7 +249,7 @@ export class ProductsService {
                             classifies: '$classifies',
                             seller: "$seller"
                         },
-                        '$medias'
+                        '$decriptions'
                     ]
                 }
             }
@@ -265,10 +265,10 @@ export class ProductsService {
                     classifies: '$classifies',
                     seller: "$seller"
                 },
-                medias: {
+                decriptions: {
                     $push: {
-                        urlMedia: "$urlMedia",
-                        typeofMedia: "$typeofMedia",
+                        key: "$key",
+                        value: "$value",
                     }
                 }
             }
@@ -283,7 +283,7 @@ export class ProductsService {
                 attributes: "$_id.attributes",
                 classifies: '$_id.classifies',
                 seller: "$_id.seller",
-                medias: 1
+                decriptions: 1
             }
         }
         ])
