@@ -43,6 +43,19 @@ export class ProductsController {
     }
 
     @Public()
+    @Get("/mainFage")
+    async getAllroducfoMainfage() {
+        return await this.productService.getProductsForMainPage()
+    }
+
+
+    @Public()
+    @Get("/findpage/:page")
+    async getAllroducfByPage(@Param('page') page: number) {
+        return await this.productService.getProductsByPage(page)
+    }
+
+    @Public()
     @Post("/files")
     @UseInterceptors(AnyFilesInterceptor())
     async updateSignFile(@UploadedFiles() files: Array<Express.Multer.File>) {

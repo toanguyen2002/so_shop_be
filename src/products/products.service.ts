@@ -41,7 +41,15 @@ export class ProductsService {
     }
 
     async getProducts(): Promise<Products[]> {
-        return await this.model.find().exec();
+        return (await this.model.find().exec()).slice(0, 20);
+    }
+    async getProductsForMainPage(): Promise<Products[]> {
+        return (await this.model.find().exec()).slice(0, 20);
+    }
+    async getProductsByPage(page: number): Promise<Products[]> {
+        const start = (12 + 1) * page
+        const end = start + 20
+        return (await this.model.find().exec()).slice(start, end);
     }
     async getProductsFlex(productsSearchStringDTO: ProductsSearchStringDTO): Promise<Products[]> {
         return this.model.find({
@@ -288,4 +296,15 @@ export class ProductsService {
         }
         ])
     }
+
+
+    // (5+1)*0 + 5
+
+    // 0 5
+
+    // 5*1 + 5
+
+    // 6 10
+
+
 }
