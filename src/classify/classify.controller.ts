@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ClassifyService } from './classify.service';
 import { Public } from 'src/users/guard/user.guard';
 import { ClassifyDTO } from './dto/classify.dto';
+import { Classify } from './schema/classify.schema';
 
 @Controller('classify')
 export class ClassifyController {
@@ -20,4 +21,9 @@ export class ClassifyController {
         return await this.classifyService.updateClassify(classifyDTO)
     }
 
+    @Public()
+    @Get("/:id")
+    async find(@Param("id") id: string): Promise<Classify[]> {
+        return await this.classifyService.findDecripByProductsId(id)
+    }
 }

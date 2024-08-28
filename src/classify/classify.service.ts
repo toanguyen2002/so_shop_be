@@ -30,7 +30,11 @@ export class ClassifyService {
     async getOnelassifyById(id: string): Promise<Classify> {
         return await this.model.findById(id)
     }
-
+    async findDecripByProductsId(id: string): Promise<Classify[]> {
+        return await this.model.aggregate([
+            { $match: { product: new mongoose.Types.ObjectId(id) } }
+        ])
+    }
 
 
     async getAllClassifyByProductId(sellProductsDTO: SellProductsDTO): Promise<Classify> {
@@ -77,4 +81,6 @@ export class ClassifyService {
         classify[0].stock = classify[0].stock + calcClassify
         return await this.model.findByIdAndUpdate(id, classify[0])
     }
+
+
 }
