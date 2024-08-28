@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Decription, DecriptionDocument } from './schema/decription.schema';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { DecriptionDTO } from './dto/Decription.dto';
+import { DecriptionDTO } from './dto/decriptions.dto';
 
 @Injectable()
 export class DecriptionService {

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { DecriptionDTO } from './dto/Decription.dto';
+import { DecriptionDTO } from './dto/decriptions.dto';
 import { DecriptionService } from './decription.service';
 import { Public } from 'src/users/guard/user.guard';
 import { Decription } from './schema/decription.schema';
