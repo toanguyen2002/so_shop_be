@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Products, ProductsDocument } from './schema/product.schema';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, PipelineStage } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductsDTO, ProductsSearchStringDTO, SellProductsDTO } from './dto/products.dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
@@ -54,62 +54,47 @@ export class ProductsService {
         products[0].selled = products[0].selled + calcProduct
         return await this.model.findByIdAndUpdate(id, products[0])
     }
-    // async sellProduct(sellProductsDTO: SellProductsDTO): Promise<any> {
-    //     const classify = await this.classifyService.getOnelassifyById(sellProductsDTO.classifyId)
-    //     const balance = await this.walletService.getBalance({ user: sellProductsDTO.buyer, balance: 0 })
-    //     const totalBalence = classify.price * sellProductsDTO.numberProduct
-    //     if (classify.stock >= sellProductsDTO.numberProduct) {
-    //         if (balance.balance >= totalBalence) {
-    //             const decreBalence = await this.walletService.dereBalance({ user: sellProductsDTO.buyer, balance: totalBalence })
-    //             const updateClassify = await this.classifyService.updateClassifyWhenUserByProducts(sellProductsDTO)
-    //             if (decreBalence) {
-    //                 if (updateClassify) {
-    //                     const products = await this.calcProduct(sellProductsDTO.productId, sellProductsDTO.numberProduct)
-    //                     const trade = await this.TradeService.addTrade(
-    //                         {
-    //                             tradeStatus: false,
-    //                             buyer: sellProductsDTO.buyer.toString(),
-    //                             seller: products.seller.toString(),
-    //                             tradeId: "GD" + Math.random().toString(),
-    //                             tradeTitle: "buy products",
-    //                             sellerAccept: false,
-    //                             products: [],
-    //                             balence: 0
-    //                         })
-    //                     await this.historyService.createHistories({ idTrade: trade.tradeId, total: totalBalence, tradeItem: sellProductsDTO, buyHis: trade.buyer.toString() });
-
-    //                     return {
-    //                         type: true,
-    //                         Code: "Thanh Toán Thành Công Sản Phẩm"
-    //                     };
-    //                 } else {
-    //                     return {
-    //                         type: false,
-    //                         Code: "Thanh Toán Thất Bại Vì Sản Phẩm Không Đủ"
-    //                     };
-    //                 }
-    //             } else {
-    //                 return {
-    //                     type: false,
-    //                     Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
-    //                 };
-    //             }
-    //         } else {
-    //             return {
-    //                 type: false,
-    //                 Code: "Thanh Toán Thất Bại Vì Số Dư Không Đủ"
-    //             };
-    //         }
-    //     } else {
-    //         return {
-    //             type: false,
-    //             Code: "Sản Phẩm Không Đủ Hàng"
-    //         };
-    //     }
-
-    // }
+    async dynamicFind(dynamicValue: any, sort: any): Promise<Products[]> {
+        const pipeline: any[] = [{
+            $lookup: {
+                from: "classifies",
+                localField: "_id",
+                foreignField: "product",
+                as: "class"
+            }
+        }, {
+            $unwind: "$class"
+        }, {
+            $group: {
+                _id: "$_id",
+                productName: { $first: "$productName" },
+                cate: { $first: "$cate" },
+                seller: { $first: "$seller" },
+                brand: { $first: "$brand" },
+                selled: { $first: "$selled" },
+                dateUp: { $first: "$dateUp" },
+                resp: { $first: "$class" }
+            }
+        }]
+        if (dynamicValue[0]?.key == "brand" && dynamicValue[0].value != "") {
+            pipeline.push({ $match: { brand: dynamicValue[0].value } })
+        } else {
+            pipeline.push({ $match: {} })
+        }
+        switch (dynamicValue[1]?.key) {
+            case "selled":
+                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[1]?.value) } })
+                break;
+            case "dateUp":
+                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[1]?.value) } })
+                break
+            case "price":
+                pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[1]?.value) } })
+                break
+        }
+        return this.model.aggregate(pipeline).exec();
+    }
     async getProductById(id: string): Promise<any> {
-        // console.log(id);
         return await this.model.aggregate([{
             $match:
             {

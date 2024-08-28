@@ -6,12 +6,15 @@ import { WalletService } from 'src/wallet/wallet.service';
 import { Refund } from 'src/trade/dto/trade.dto';
 import { TradeService } from 'src/trade/trade.service';
 import { ProductsService } from 'src/products/products.service';
+import { MailerService } from '@nestjs-modules/mailer';
 @Injectable()
 export class ZaloService {
     constructor(
         private readonly walletService: WalletService,
         private readonly tradeService: TradeService,
         private readonly productService: ProductsService,
+        private readonly mailService: MailerService,
+
     ) { }
     formatDate(date: Date) {
         let yy = date.getFullYear().toString().slice(-2);
@@ -48,7 +51,7 @@ export class ZaloService {
             items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
         }))
         const embed_data = {};
-
+        const url = "https://97e8-118-69-125-122.ngrok-free.app"
         const transID = Math.floor(Math.random() * 1000000);
         const order = {
             app_id: config.app_id,
@@ -57,11 +60,11 @@ export class ZaloService {
             app_time: Date.now(), // miliseconds
             item: JSON.stringify(items),
             embed_data: JSON.stringify(embed_data),
-            amount: total / 10,
+            amount: total / 100,
             description: `${idTrans}`,
             bank_code: "",
             mac: "",
-            callback_url: "https://ad1a-2402-800-63b6-bf16-f937-8fb7-96f2-5485.ngrok-free.app/trade/callback"
+            callback_url: `${url}/trade/callback`
         };
         // appid|app_trans_id|appuser|amount|apptime|embeddata|item
         const data = config.app_id + "|" + order.app_trans_id + "|" + order.app_user + "|" + order.amount + "|" + order.app_time + "|" + order.embed_data + "|" + order.item;
@@ -86,43 +89,46 @@ export class ZaloService {
         try {
             let dataStr = req.body.data;
             let reqMac = req.body.mac;
-
             let mac = CryptoJS.HmacSHA256(dataStr, config.key2).toString();
-            console.log("mac =", mac);
-
-
-            // kiểm tra callback hợp lệ (đến từ ZaloPay server)
             if (reqMac !== mac) {
-                console.log(false);
-
-                // callback không hợp lệ
                 result.return_code = -1;
                 result.return_message = "mac not equal";
             }
             else {
-                console.log(true);
-
                 let dataJson = JSON.parse(dataStr, (key, value) => {
-
                     return value;
                 });
-                await Promise.all(dataJson.app_user.split("_").map(async (e) => {
+                console.log(dataJson);
+
+                await Promise.all(dataJson.app_user.split("_").map(async (e: string) => {
                     await this.tradeService.successPayment(e)
+                    const trade = await this.tradeService.getTradeByStringTradeId(e);
+                    // console.log(trade[0]);
+                    this.sendEmail(trade[0].buyer, e)
                 }))
-                console.log("payment success");
+
                 result.return_code = 1;
                 result.return_message = "success";
             }
         } catch (ex) {
-            result.return_code = 0; // ZaloPay server sẽ callback lại (tối đa 3 lần)
+            result.return_code = 0;
             result.return_message = ex.message;
         }
 
-        // thông báo kết quả cho ZaloPay server
+
         res.json(result);
     }
 
     async refunds(refund: Refund) {
+        // const config = {
+        //     app_id: "2553",
+        //     key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+        //     key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+        //     endpoint: "https://sb-openapi.zalopay.vn/v2/refund"
+        // };
+        console.log(refund);
+
+
         const config = {
             app_id: "2553",
             key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
@@ -141,21 +147,42 @@ export class ZaloService {
             description: 'ZaloPay Refund',
             mac: ""
         };
-
-        console.log(refund);
-
-
-        // appid|zptransid|amount|description|timestamp
         let data = params.app_id + "|" + params.zp_trans_id + "|" + params.amount + "|" + params.description + "|" + params.timestamp;
         params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
 
-        axios.post(config.endpoint, null, { params })
-            .then(res => console.log(res.data))
-            .catch(err => console.log(err));
+        console.log(params);
+
+        try {
+            const rs = await axios.post(config.endpoint, null, { params })
+            return rs.data
+        } catch (error) {
+            return error
+        }
+
+
     }
 
+    sendEmail(buyer: string, idTrade: string) {
+        this.mailService
+            .sendMail({
+                to: 'toanguyen200220@gmail.com', // list of receivers
+                from: 'noreply@osshop.com', // sender address
+                subject: 'notify from os shop ✔', // Subject line
+                text: 'welcome',
+                html: `
+                    <div class="content">
+                    <p>Dear </p>
 
-    async getTrans() {
+            <p>confirm that your order #[${idTrade}] has been successfully canceled as per your request. We apologize for any inconvenience this may have caused and are here to assist you with any future needs.</p>
 
+            <p>If payment has already been processed, a refund will be issued to your original payment method within 7 business days. You will receive a confirmation email once the refund has been processed.</p>
+
+            <p>If you have any further questions or need additional assistance, please feel free to contact us at htkh@os.shop or 099 900 9999.</p>
+
+            <p>Thank you for choosing us. We look forward to serving you in the future.</p>
+
+            <p>Sincerely</p>
+        </div>`
+            })
     }
 }

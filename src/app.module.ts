@@ -27,9 +27,7 @@ import { HistoryModule } from './history/history.module';
 import { TradeController } from './trade/trade.controller';
 import { TradeModule } from './trade/trade.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ConfigModule } from '@nestjs/config';
-import { AwsService } from './aws/aws.service';
 import { AwsModule } from './aws/aws.module';
 import { ZaloModule } from './zalo/zalo.module';
 
@@ -65,8 +63,7 @@ import { ZaloModule } from './zalo/zalo.module';
     //     forcePathStyle: true,
 
     //   },
-    // })
-    // ,
+    // }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async () => (

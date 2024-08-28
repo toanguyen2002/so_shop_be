@@ -29,6 +29,12 @@ export class TradeService {
         }]))
     }
 
+    async getTradeByStringTradeId(tradeId: string): Promise<any> {
+        return await this.model.aggregate(([{
+            $match: { tradeId: tradeId }
+        }]))
+    }
+
     async getTradeByBuyerId(tradeDTO: TradeDTO): Promise<Trade> {
         return await this.model.aggregate(([{
             $match: { buyer: new mongoose.Types.ObjectId(tradeDTO.buyer) }
@@ -92,9 +98,9 @@ export class TradeService {
 
     async successPayment(tradeId: string): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: tradeId } }])
-        if (rs[0].payment) {
-            return false
-        }
+        // if (rs[0].payment) {
+        //     return false
+        // }
         rs[0].payment = true
         return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
     }

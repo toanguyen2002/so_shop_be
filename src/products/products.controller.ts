@@ -1,10 +1,8 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { Public } from 'src/users/guard/user.guard';
 import { ProductsDTO, SellProductsDTO } from './dto/products.dto';
 import { ProductsService } from './products.service';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { v4 as uuidv4 } from 'uuid';
-import { S3 } from "aws-sdk"
 import { AwsService } from 'src/aws/aws.service';
 
 
@@ -14,6 +12,12 @@ export class ProductsController {
         private readonly productService: ProductsService,
         private readonly aws: AwsService
     ) { }
+
+    @Public()
+
+
+
+
     @Public()
     @Post("/add")
     async addProduct(@Body() productDTO: ProductsDTO) {
@@ -27,11 +31,22 @@ export class ProductsController {
     }
 
     @Public()
-    @Get("/:id")
+    @Get("dynamicfind")
+    async handleFind(@Req() req: any) {
+        // console.log(req.query);
+        const querys = []
+        for (let key in req.query) {
+            querys.push({ key: key, value: req.query[key] })
+        }
+        return await this.productService.dynamicFind(querys, 1)
+
+
+    }
+    @Public()
+    @Get("/findByid/:id")
     async getAllroductById(@Param('id') id: string) {
         return await this.productService.getProductById(id)
     }
-
 
     @Public()
     @Post("/files")
@@ -47,6 +62,10 @@ export class ProductsController {
         return images
 
     }
+
+
+
+
 
 }
 
