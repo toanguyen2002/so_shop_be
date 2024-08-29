@@ -1,5 +1,5 @@
 export class DecriptionDTO {
     key: string
-    string: string
+    value: string
     product: string
 }
