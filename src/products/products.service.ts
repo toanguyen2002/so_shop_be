@@ -47,7 +47,7 @@ export class ProductsService {
         return (await this.model.find().exec()).slice(0, 20);
     }
     async getProductsByPage(page: number): Promise<Products[]> {
-        const start = (12 + 1) * page
+        const start = (12 + 1) * (page - 1)
         const end = start + 20
         return (await this.model.find().exec()).slice(start, end);
     }
