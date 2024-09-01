@@ -75,6 +75,7 @@ export class TradeController {
                         sellerAccept: false, //default false => true ng bán chấp nhận và đang lien he de giao hàng
                         tradeStatus: false,  //đang thanh toán or 
                         payment: false,//chưa thanh toán
+                        isCancel: false,//huỷ gd
                         balence: item.balanceEach,
                         address: tradeDTO.address
                     })
@@ -97,25 +98,45 @@ export class TradeController {
     }
 
     @Public()
-    @Post("payment")
-    async paymentTrade(@Body() tradeDTO: TradeDTO) {
-        await this.tradeService.paymentTrade(tradeDTO)
-        this.wallerService.increBalance({ user: tradeDTO.seller, balance: tradeDTO.balence })
-        return
-
-    }
-
-    @Public()
     @Post("cancel")
-    async cancelTrade(@Body() tradeDTO: TradeDTO) {
-        this.wallerService.increBalance({ user: tradeDTO.buyer, balance: tradeDTO.balence })
-        return await this.tradeService.cancelTrade(tradeDTO)
+    async cancelTrade(@Body() tradeDTO: TradeDTO):Promise<any> {
+        const trade =  await this.tradeService.getTradeByStringId(tradeDTO.tradeId)
+        console.log();
+
+        if (trade.payment) {
+            this.updateCancel(trade)
+            this.wallerService.increBalance({ user: tradeDTO.buyer, balance: tradeDTO.balence })
+             await this.tradeService.cancelTrade(tradeDTO)
+             return {
+                code:200,
+                title:"cancel success"
+             }
+        }else{
+            this.updateCancel(trade)
+            await this.tradeService.cancelTrade(tradeDTO)
+            return {
+                code:200,
+                title:"cancel success"
+             }
+        }
     }
 
     @Public()
-    @Post("zalopayment")
-    async payment(@Body() tradeids: any) {
-        return await this.zaloService.payment(tradeids);
+    @Post("payment")
+    async payment(@Body() tradeids: any) : Promise<any>{
+        switch(tradeids.method){
+            case "zalo" :
+                console.log(tradeids);
+                return await this.zaloService.payment(tradeids);
+            case "cash" :
+                return {
+                return_code: 1,
+                return_message: "Giao dịch thành công",
+                sub_return_code: 1,
+                sub_return_message: "Giao dịch thành công",
+                order_url: "url//success",
+        }
+    }
     }
 
     @Public()
@@ -182,9 +203,12 @@ export class TradeController {
     }
 
     async updateCancel(handleCancel: any) {
-        await this.wallerService.increBalance({ user: handleCancel.tradeItem.userId, balance: handleCancel.total })
-        await this.productsService.calcProduct(handleCancel.tradeItem.productId, -handleCancel.tradeItem.numberProduct)
-        await this.classifyService.updateClassifyByIdClassify(handleCancel.tradeItem.classifyId, handleCancel.tradeItem.numberProduct)
+        console.log(handleCancel);
+        
+        await Promise.all(handleCancel.products.map(async(product:any)=> {
+                await this.productsService.calcProduct(product.productId, -product.numberProduct)
+                await this.classifyService.updateClassifyByIdClassify(product.classifyId, product.numberProduct)
+            }))
     }
     sendEmail(typeEmail: string, tradeDTO: TradeDTO) {
         this.userService.getprofile(tradeDTO.buyer)

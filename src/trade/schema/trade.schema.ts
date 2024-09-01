@@ -20,13 +20,14 @@ export class Trade {
     tradeStatus: boolean
     @Prop()
     payment: boolean
+    @Prop()
+    isCancel: boolean
 
 
     @Prop()
     tradeTitle: String
     @Prop()
     balence: number
-
     @Prop()
     address: string
 

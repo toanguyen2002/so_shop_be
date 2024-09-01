@@ -42,13 +42,12 @@ export class TradeService {
     }
 
     async cancelTrade(tradeDTO: TradeDTO): Promise<Trade> {
-        // console.log(tradeDTO);
         const trade = await this.model.aggregate(([{
             $match: { buyer: new mongoose.Types.ObjectId(tradeDTO.buyer), tradeId: tradeDTO.tradeId }
         }]))
-        trade[0].tradeStatus = false
-        console.log(trade[0]);
-
+        console.log(trade);
+        
+        trade[0].isCancel = true
         return await this.model.findByIdAndUpdate(trade[0]._id, trade[0])
     }
 

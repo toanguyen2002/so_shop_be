@@ -6,7 +6,7 @@ export class TradeDTO {
     sellerAccept: boolean //default false => true ng bán chấp nhận và đang lien he de giao hàng
     tradeStatus: boolean  //default true => false thì user sẽ hoàn tiền đã payment và cancel đơn hàng
     payment: boolean // default false => true sẽ về tiền seller
-
+    isCancel:boolean
     products: any
     balence: number
     address: string

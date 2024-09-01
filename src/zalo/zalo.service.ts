@@ -41,13 +41,16 @@ export class ZaloService {
                 const trade = await this.tradeService.getTradeByStringId(e)
                 trades.push(trade)
                 total += trade.balence
-                await Promise.all(trade.products.map(async (p) => {
+                await Promise.all(trade.products.map(async (p:any) => {
                     ids.push(p)
                 }))
             })
         )
-        await Promise.all(ids.map(async (e) => {
+        await Promise.all( ids.map(async (e) => {
+            console.log(e);
+        
             const product = await this.productService.getProductById(e.productId)
+            
             items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
         }))
         const embed_data = {};
@@ -60,7 +63,7 @@ export class ZaloService {
             app_time: Date.now(), // miliseconds
             item: JSON.stringify(items),
             embed_data: JSON.stringify(embed_data),
-            amount: total / 100,
+            amount: total,
             description: `${idTrans}`,
             bank_code: "",
             mac: "",
@@ -103,7 +106,6 @@ export class ZaloService {
                 await Promise.all(dataJson.app_user.split("_").map(async (e: string) => {
                     await this.tradeService.successPayment(e)
                     const trade = await this.tradeService.getTradeByStringTradeId(e);
-                    // console.log(trade[0]);
                     this.sendEmail(trade[0].buyer, e)
                 }))
 
@@ -126,9 +128,6 @@ export class ZaloService {
         //     key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
         //     endpoint: "https://sb-openapi.zalopay.vn/v2/refund"
         // };
-        console.log(refund);
-
-
         const config = {
             app_id: "2553",
             key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
