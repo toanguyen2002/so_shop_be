@@ -10,9 +10,15 @@ export class Coupons {
     @Prop()
     nummOf: number
     @Prop()
-    recent: string
+    recent: number
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }] })
-    users: Users[]
+    buyers: Users[]
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Users" })
+    seller: Users
+    @Prop()
+    dateStart:Date
+    @Prop()
+    dateEnd:Date
 
 }
 
