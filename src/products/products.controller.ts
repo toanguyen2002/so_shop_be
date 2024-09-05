@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, Post, Req, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { Public } from 'src/users/guard/user.guard';
+import { Public, Roles } from 'src/users/guard/user.guard';
 import { ProductsDTO, SellProductsDTO } from './dto/products.dto';
 import { ProductsService } from './products.service';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { AwsService } from 'src/aws/aws.service';
+import { Role } from 'src/users/enum/role.enum';
 
 
 @Controller('products')

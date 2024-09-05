@@ -12,7 +12,7 @@ export class CouponService {
     private readonly logger = new Logger(CouponService.name);
 
 
-    @Cron(CronExpression.EVERY_SECOND)
+    @Cron(CronExpression.EVERY_DAY_AT_9PM)
     handleAutoCreateCoupons(){
         const dateStart = new Date(new Date().getDate()+2+ "/" + new Date().getMonth()+"/" + new Date().getFullYear())
         const code = randomUUID().slice(0,8)
