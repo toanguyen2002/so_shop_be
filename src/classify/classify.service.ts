@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Classify, ClassifyDocument } from './schema/classify.schema';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Mongoose } from 'mongoose';
 import { ClassifyDTO, ClassifyUpdateDTO } from './dto/classify.dto';
 import { SellProductsDTO } from 'src/products/dto/products.dto';
 import { ProductsService } from 'src/products/products.service';
@@ -35,8 +35,6 @@ export class ClassifyService {
             { $match: { product: new mongoose.Types.ObjectId(id) } }
         ])
     }
-
-
     async getAllClassifyByProductId(sellProductsDTO: SellProductsDTO): Promise<Classify> {
         const rs = await this.model.aggregate([{
             $match: {
@@ -47,7 +45,6 @@ export class ClassifyService {
 
         return rs[0]
     }
-
 
     async updateClassifyWhenUserByProducts(sellProductsDTO: SellProductsDTO): Promise<any> {
         try {
@@ -80,6 +77,25 @@ export class ClassifyService {
         }
         classify[0].stock = classify[0].stock + calcClassify
         return await this.model.findByIdAndUpdate(id, classify[0])
+    }
+    async getclassifybyRequest(value: any): Promise<any> {
+        const querys = []
+        for (let key in value.query) {
+            querys.push({ key: key, value: value.query[key] })
+        }
+        console.log(querys);
+       
+        const pipes = []
+        if (querys[2].value!=="") {
+            // console.log(""==querys[2].value);
+            pipes.push({$match: {key:querys[1].value, "_id":new mongoose.Types.ObjectId(querys[0]?.value),value:querys[2]?.value}}) 
+        }
+        else{
+            // console.log(""==querys[2].value);
+            pipes.push({$match: {key:querys[1].value}}) 
+        }
+        // console.log(pipes);
+        return await this.model.aggregate(pipes)
     }
 
 

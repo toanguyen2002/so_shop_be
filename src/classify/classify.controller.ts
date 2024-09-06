@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ClassifyService } from './classify.service';
 import { Public } from 'src/users/guard/user.guard';
 import { ClassifyDTO } from './dto/classify.dto';
@@ -20,10 +20,18 @@ export class ClassifyController {
     async updateClassify(@Body() classifyDTO: ClassifyDTO) {
         return await this.classifyService.updateClassify(classifyDTO)
     }
-
+    @Public()
+    @Get("dynamicvalue")
+    async findByIdreq(@Req() req: any): Promise<Classify[]> {
+        return await this.classifyService.getclassifybyRequest(req)
+    }
     @Public()
     @Get("/:id")
     async find(@Param("id") id: string): Promise<Classify[]> {
         return await this.classifyService.findDecripByProductsId(id)
     }
+
+    
+
+
 }
