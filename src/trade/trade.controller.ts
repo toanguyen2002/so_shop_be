@@ -77,7 +77,8 @@ export class TradeController {
                         payment: false,//chưa thanh toán
                         isCancel: false,//huỷ gd
                         balence: item.balanceEach,
-                        address: tradeDTO.address
+                        address: tradeDTO.address,
+                        dateTrade: new Date()
                     })
                     tradeIds.push(tradeId)
                 }

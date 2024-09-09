@@ -76,16 +76,30 @@ export class UsersService {
     }
 
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
-        const hash = await bcrypt.hash(userDTO.password, 10);
-        userDTO.password = hash
-        const { password, ...payload } = userDTO
-        try {
-            await this.model.findByIdAndUpdate(userDTO.id, userDTO)
-            return payload
+        console.log(userDTO.password !==undefined);
+        
+        if (userDTO.password !==undefined) {
+            const hash = await bcrypt.hash(userDTO.password, 10);
+            userDTO.password = hash
+            const { password, ...payload } = userDTO
+            console.log(userDTO);
+            try {
+                await this.model.findByIdAndUpdate(userDTO.id, userDTO)
+                return payload
+            } catch (error) {
+                throw new error
+            }
+        } else {
+                try {
+                    await this.model.findByIdAndUpdate(userDTO.id, userDTO)
+                 return userDTO
         } catch (error) {
             throw new error
+            
         }
-    }
+        // console.log(userDTO);
+        
+    }}
 
 
     async resetPassWord(userDTO: UserDTO): Promise<User> {

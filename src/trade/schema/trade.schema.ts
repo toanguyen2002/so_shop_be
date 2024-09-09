@@ -32,6 +32,10 @@ export class Trade {
     address: string
 
 
+    @Prop()
+    dateTrade : Date
+
+
     @Prop({
         type: mongoose.Schema.Types.Mixed
     })

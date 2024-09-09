@@ -9,6 +9,7 @@ export class TradeDTO {
     isCancel:boolean
     products: any
     balence: number
+    dateTrade : Date
     address: string
 }
 
