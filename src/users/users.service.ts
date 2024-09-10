@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersDocument, Users } from './schema/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { UserDTO } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
@@ -69,16 +69,14 @@ export class UsersService {
 
     async getprofile(userName: string): Promise<User> {
         const existUser = await this.model.aggregate([{
-            $match: { userName: userName }
+            $match: { _id: new mongoose.Types.ObjectId(userName) }
         }])
         const { password, ...payload } = existUser[0]
         return payload
     }
 
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
-        console.log(userDTO.password !==undefined);
-        
-        if (userDTO.password !==undefined) {
+        if (userDTO.password !== undefined) {
             const hash = await bcrypt.hash(userDTO.password, 10);
             userDTO.password = hash
             const { password, ...payload } = userDTO
@@ -90,16 +88,14 @@ export class UsersService {
                 throw new error
             }
         } else {
-                try {
-                    await this.model.findByIdAndUpdate(userDTO.id, userDTO)
-                 return userDTO
-        } catch (error) {
-            throw new error
-            
+            try {
+                await this.model.findByIdAndUpdate(userDTO.id, userDTO)
+                return userDTO
+            } catch (error) {
+                throw new error
+            }
         }
-        // console.log(userDTO);
-        
-    }}
+    }
 
 
     async resetPassWord(userDTO: UserDTO): Promise<User> {

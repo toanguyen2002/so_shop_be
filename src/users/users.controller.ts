@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Public, Roles, UserGuard } from './guard/user.guard';
 import { Role } from './enum/role.enum';
@@ -33,9 +33,9 @@ export class UsersController {
 
 
     @Roles(Role.BUYER)
-    @Get('profile')
-    async getByUserName(@Request() req) {
-        return await req.user
+    @Get('profile/:id')
+    async getByUserName(@Param("id") id: string) {
+        return await this.service.getprofile(id)
     }
 
     // @Roles(Role.BUYER)
