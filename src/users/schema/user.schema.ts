@@ -20,6 +20,8 @@ export class Users {
     address: String
     @Prop()
     sex: string
+    @Prop()
+    number: string
 
 
 }

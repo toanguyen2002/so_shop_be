@@ -11,6 +11,8 @@ import { error } from 'console';
 import { TradeService } from 'src/trade/trade.service';
 import * as bcrypt from 'bcrypt';
 import { HistoryService } from 'src/history/history.service';
+import { ClientProxy } from '@nestjs/microservices';
+import { timeout } from 'rxjs';
 // import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
@@ -23,6 +25,8 @@ export class ProductsService {
         private readonly TradeService: TradeService,
         private readonly historyService: HistoryService,
         // private readonly aws: AwsService
+        // @Inject("service") private rabitmq: ClientProxy
+
     ) { }
     async addProducts(productsDto: ProductsDTO): Promise<Products> {
 
@@ -40,7 +44,19 @@ export class ProductsService {
         }
     }
 
+    // async demo1() {//add demo
+    //     this.rabitmq.emit("event", await this.model.find().exec())
+    // }
+
+    // async demo2() {
+    //     return this.rabitmq // find all
+    //         .send({ cmd: 'trips' }, {})
+    //         .pipe(timeout(5000));
+    // }
+
     async getProducts(): Promise<Products[]> {
+
+
         return (await this.model.find().exec()).slice(0, 20);
     }
     async getProductsForMainPage(): Promise<Products[]> {
@@ -296,15 +312,5 @@ export class ProductsService {
         }
         ])
     }
-
-
-    // (5+1)*0 + 5
-
-    // 0 5
-
-    // 5*1 + 5
-
-    // 6 10
-
 
 }

@@ -8,6 +8,7 @@ import { WalletModule } from 'src/wallet/wallet.module';
 import { TradeModule } from 'src/trade/trade.module';
 import { HistoryModule } from 'src/history/history.module';
 import { AwsModule } from 'src/aws/aws.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
     providers: [ProductsService],
@@ -18,7 +19,17 @@ import { AwsModule } from 'src/aws/aws.module';
         WalletModule,
         forwardRef(() => TradeModule),
         HistoryModule,
-        AwsModule
+        AwsModule,
+        // ClientsModule.register([
+        //     {
+        //         name: "service",
+        //         transport: Transport.RMQ,
+        //         options: {
+        //             urls: ["amqp://localhost:5672"],
+        //             queue: 'service-queue'
+        //         }
+        //     }
+        // ])
     ],
     exports: [ProductsService],
 })

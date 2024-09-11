@@ -1,17 +1,18 @@
-import { Body, Controller, Get, Param, Post, Req, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Req, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { Public, Roles } from 'src/users/guard/user.guard';
 import { ProductsDTO, SellProductsDTO } from './dto/products.dto';
 import { ProductsService } from './products.service';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { AwsService } from 'src/aws/aws.service';
 import { Role } from 'src/users/enum/role.enum';
+import { ClientProxy } from '@nestjs/microservices';
 
 
 @Controller('products')
 export class ProductsController {
     constructor(
         private readonly productService: ProductsService,
-        private readonly aws: AwsService
+        private readonly aws: AwsService,
     ) { }
 
     @Public()
@@ -19,6 +20,18 @@ export class ProductsController {
     async addProduct(@Body() productDTO: ProductsDTO) {
         return await this.productService.addProducts(productDTO)
     }
+
+    // @Public()
+    // @Get("/demo1")
+    // async demo1() {
+    //     return await this.productService.demo1()
+    // }
+    // @Public()
+    // @Get("/demo2")
+    // async demo2() {
+    //     return await this.productService.demo2()
+    // }
+
 
     @Public()
     @Get("/")

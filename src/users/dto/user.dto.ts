@@ -8,4 +8,5 @@ export class UserDTO {
     name: string
     avata: string
     address: string
+    number: string
 }
