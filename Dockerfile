@@ -26,7 +26,14 @@ ENV \
     PORT=4000 \ 
     NODE_ENV=production \ 
     DEMO_ENV=DEMO_ENV \ 
-    MONGO_URI=mongodb://host.docker.internal:27017/osdtb
+    MONGO_URI=mongodb://host.docker.internal:27017/osdtb \
+    AWS_ACCESS_KEY_ID=AKIAU2HPBJXX7HS52FSO\
+    AWS_SECRET_ACCESS_KEY=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\
+    AWS_REGION=us-east-1\
+    AWS_BUCKET_NAME=doantotnghiepiuh\
+    AWS_URL_RETURN_IMAGE=https://doantotnghiepbucket.s3.amazonaws.com\
+    MAIL_USERNAME=toanguyen120921@gmail.com\
+    MAIL_PASSWORD='pkyw ypxj uqrf qmno'
 
 COPY --from=build /user/src/app/dist ./dist
 COPY --from=build /user/src/app/node_modules ./node_modules

@@ -43,8 +43,8 @@ import { DecriptionModule } from './decription/decription.module';
     WalletModule,
     AttributesModule,
     // MONGO_URI=mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority
-    MongooseModule.forRoot('mongodb://localhost:27017/osdtb'),
-    // MongooseModule.forRoot(process.env.MONGO_URI),
+    // MongooseModule.forRoot('mongodb://localhost:27017/osdtb'),
+    MongooseModule.forRoot(process.env.MONGO_URI),
 
     JwtModule.register({
       global: true,
@@ -53,18 +53,17 @@ import { DecriptionModule } from './decription/decription.module';
     }),
     HistoryModule,
     TradeModule,
-    // S3Module.forRoot({
-    //   config: {
-    //     credentials: {
-    //       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    //     },
-    //     region: "us-east-1",
-    //     endpoint: '*',
-    //     forcePathStyle: true,
-
-    //   },
-    // }),
+    S3Module.forRoot({
+      config: {
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        },
+        region: "us-east-1",
+        endpoint: '*',
+        forcePathStyle: true
+      },
+    }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async () => (
