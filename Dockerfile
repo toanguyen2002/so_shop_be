@@ -43,4 +43,4 @@ EXPOSE ${PORT}
 
 USER node
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:prod"] 

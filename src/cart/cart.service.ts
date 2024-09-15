@@ -13,7 +13,7 @@ export class CartService {
         private readonly productsService: ProductsService,
 
     ) { }
-    async addCart(buyer: string, seller: string, item: any): Promise<Cart> {
+    async addCart(buyer: string, seller: string, item: any): Promise<any> {
         const cart = await this.model.aggregate([
             { $match: { buyer: new mongoose.Types.ObjectId(buyer) } }
         ])
@@ -24,26 +24,62 @@ export class CartService {
                     for (let j = 0; j < lengthItem; j++) {
                         if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
                             cart[0].products[i].items[j].numberProduct += item.numberProduct
-                            this.calcUpdate(item)
-                            return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                            // console.log("đã có");
+                            // console.log(await this.calcUpdate(item));
+                            if (await this.calcUpdate(item)) {
+                                return {
+                                    status: "thêm thành công",
+                                    product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                                }
+                            } else {
+                                return {
+                                    status: "sản phẩm không đủ số lượng tồn kho",
+                                    product: []
+                                }
+                            }
                         }
                     }
                     cart[0].products[i].items.push(item)
-                    this.calcUpdate(item)
-                    return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                    // console.log("thêm mới");
+                    // console.log(await this.calcUpdate(item));
+                    if (await this.calcUpdate(item)) {
+                        return {
+                            status: "thêm thành công",
+                            product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                        }
+                    } else {
+                        return {
+                            status: "sản phẩm không đủ số lượng tồn kho",
+                            product: []
+                        }
+                    }
                 }
             }
             const items = []
             items.push(item)
             cart[0].products.push({ seller: seller, items: items })
-            this.calcUpdate(item)
-            return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+            if (await this.calcUpdate(item)) {
+                return {
+                    status: "thêm thành công",
+                    product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                }
+            } else {
+                return {
+                    status: "sản phẩm không đủ số lượng tồn kho",
+                    product: []
+                }
+            }
         } else {
             const products = []
             const items = []
-            items.push(item)
-            products.push({ seller, items })
-            return await new this.model({ buyer: buyer, products: products }).save()
+            if (this.calcUpdate(item)) {
+                items.push(item)
+                products.push({ seller, items })
+                return await new this.model({ buyer: buyer, products: products }).save()
+            } else {
+                return "sản phẩm không đủ số lượng tồn kho"
+            }
+
         }
     }
 
@@ -101,7 +137,13 @@ export class CartService {
         return rs[0];
     }
     async calcUpdate(item: any) {
-        await this.classifService.calcClassify(item.classifyId, -item.numberProduct)
-        await this.productsService.calcProduct(item.productId, item.numberProduct)
+        if (await this.classifService.calcClassify(item.classifyId, -item.numberProduct)) {
+            await this.productsService.calcProduct(item.productId, item.numberProduct)
+            return true
+        } else {
+            return false
+        }
+
+
     }
 }

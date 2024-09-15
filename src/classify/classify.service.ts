@@ -72,7 +72,6 @@ export class ClassifyService {
     async calcClassify(id: string, calcClassify: number): Promise<any> {
         const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id.toString()) } }])
         if (calcClassify < 0 && classify[0].stock + calcClassify < 0) {
-
             return false
         }
         classify[0].stock = classify[0].stock + calcClassify
@@ -84,15 +83,15 @@ export class ClassifyService {
             querys.push({ key: key, value: value.query[key] })
         }
         console.log(querys);
-       
+
         const pipes = []
-        if (querys[2].value!=="") {
+        if (querys[2].value !== "") {
             // console.log(""==querys[2].value);
-            pipes.push({$match: {key:querys[1].value, "_id":new mongoose.Types.ObjectId(querys[0]?.value),value:querys[2]?.value}}) 
+            pipes.push({ $match: { key: querys[1].value, "_id": new mongoose.Types.ObjectId(querys[0]?.value), value: querys[2]?.value } })
         }
-        else{
+        else {
             // console.log(""==querys[2].value);
-            pipes.push({$match: {key:querys[1].value}}) 
+            pipes.push({ $match: { key: querys[1].value } })
         }
         // console.log(pipes);
         return await this.model.aggregate(pipes)
