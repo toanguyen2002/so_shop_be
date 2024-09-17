@@ -5,6 +5,7 @@ export class ProductsDTO {
     selled: number
     dateUp: Date
     seller: string
+    images: []
 
 }
 

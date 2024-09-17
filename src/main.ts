@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+// docker run --env-file .env -p 4000:4000 nest_be:latest
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
@@ -11,7 +12,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('DATN')
     .build();
-  console.log('process.env', process.env);
+  // console.log('process.env', process.env);
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

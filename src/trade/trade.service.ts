@@ -45,8 +45,7 @@ export class TradeService {
         const trade = await this.model.aggregate(([{
             $match: { buyer: new mongoose.Types.ObjectId(tradeDTO.buyer), tradeId: tradeDTO.tradeId }
         }]))
-        console.log(trade);
-
+        // console.log(trade);
         trade[0].isCancel = true
         return await this.model.findByIdAndUpdate(trade[0]._id, trade[0])
     }
@@ -67,6 +66,7 @@ export class TradeService {
         return rs[0]
     }
 
+    //người bán đồng ý mua hàng
     async acceptTrade(tradeDTO: TradeDTO): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
         if (rs[0].sellerAccept) {
@@ -77,6 +77,7 @@ export class TradeService {
         return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
     }
 
+    //trang thai giao dich
     async updateStatusTrade(tradeDTO: TradeDTO): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
         if (rs[0].tradeStatus) {
