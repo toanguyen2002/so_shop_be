@@ -38,6 +38,7 @@ export class ProductsService {
                 selled: 0,
                 dateUp: Date.now(),
                 seller: productsDto.seller,
+                images: productsDto.images
             }).save()
         } catch (error) {
             throw new ExceptionsHandler

@@ -18,6 +18,8 @@ export class ProductsController {
     @Public()
     @Post("/add")
     async addProduct(@Body() productDTO: ProductsDTO) {
+        // console.log(productDTO);
+
         return await this.productService.addProducts(productDTO)
     }
 
