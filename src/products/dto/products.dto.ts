@@ -9,6 +9,18 @@ export class ProductsDTO {
 
 }
 
+export class ProductsUpdateDTO {
+    id: string
+    productName: String
+    cate: string
+    brand: string
+    selled: number
+    dateUp: Date
+    seller: string
+    images: []
+
+}
+
 export class SellProductsDTO {
     productId: string
     classifyId: string

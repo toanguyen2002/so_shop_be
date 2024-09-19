@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Decription, DecriptionDocument } from './schema/decription.schema';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { DecriptionDTO } from './dto/decriptions.dto';
+import { DecriptionDTO, DecriptionUpdateDTO } from './dto/decriptions.dto';
 
 @Injectable()
 export class DecriptionService {
@@ -15,5 +15,9 @@ export class DecriptionService {
         return await this.model.aggregate([
             { $match: { product: new mongoose.Types.ObjectId(id) } }
         ])
+    }
+
+    async updateDecription(decripDTO: DecriptionUpdateDTO): Promise<Decription> {
+        return await this.model.findByIdAndUpdate(decripDTO.id, decripDTO, { new: true })
     }
 }

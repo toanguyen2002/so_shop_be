@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Attributes, AttributesDocument } from './schema/attributes.schema';
 import { Model } from 'mongoose';
-import { AttributeDTO } from './dto/attribute.dto';
+import { AttributeDTO, AttributeUpdateDTO } from './dto/attribute.dto';
 
 @Injectable()
 export class AttributesService {
@@ -15,6 +15,11 @@ export class AttributesService {
             key: attributeDTO.key,
             value: attributeDTO.value
         }).save()
+    }
+
+    async finđAnUpdate(attributeDTO: AttributeUpdateDTO): Promise<Attributes> {
+        const rs = await this.model.findByIdAndUpdate(attributeDTO.id, attributeDTO, { new: true })
+        return rs
     }
 
 

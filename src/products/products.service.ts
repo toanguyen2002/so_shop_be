@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Products, ProductsDocument } from './schema/product.schema';
 import mongoose, { Model, PipelineStage } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ProductsDTO, ProductsSearchStringDTO, SellProductsDTO } from './dto/products.dto';
+import { ProductsDTO, ProductsSearchStringDTO, ProductsUpdateDTO, SellProductsDTO } from './dto/products.dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { ClassifyService } from 'src/classify/classify.service';
 import { WalletService } from 'src/wallet/wallet.service';
@@ -44,16 +44,6 @@ export class ProductsService {
             throw new ExceptionsHandler
         }
     }
-
-    // async demo1() {//add demo
-    //     this.rabitmq.emit("event", await this.model.find().exec())
-    // }
-
-    // async demo2() {
-    //     return this.rabitmq // find all
-    //         .send({ cmd: 'trips' }, {})
-    //         .pipe(timeout(5000));
-    // }
 
     async getProducts(): Promise<Products[]> {
         return (await this.model.find().exec()).slice(0, 20);
@@ -541,6 +531,9 @@ export class ProductsService {
                 as: "categories"
             }
         }])
+    }
+    async updateProdct(productDTO: ProductsUpdateDTO) {
+        return this.model.findByIdAndUpdate(productDTO.id, productDTO)
     }
 
 }

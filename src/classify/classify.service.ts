@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Classify, ClassifyDocument } from './schema/classify.schema';
 import mongoose, { Model, Mongoose } from 'mongoose';
-import { ClassifyDTO, ClassifyUpdateDTO } from './dto/classify.dto';
+import { ClassifyDTO, ClassifyUpdateAllAttDTO, ClassifyUpdateDTO } from './dto/classify.dto';
 import { SellProductsDTO } from 'src/products/dto/products.dto';
 import { ProductsService } from 'src/products/products.service';
 
@@ -16,11 +16,13 @@ export class ClassifyService {
         ).save()
     }
 
-    async updateClassify(classifyđTO: ClassifyDTO): Promise<Classify> {
-        const classify = await this.model.aggregate([{ $match: { product: new mongoose.Types.ObjectId(classifyđTO.product) } }])
+    async updateClassify(classifyđTO: ClassifyUpdateAllAttDTO): Promise<Classify> {
+        const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(classifyđTO.id) } }])
 
-        classify[0].stock += classifyđTO.stock
-        return await this.model.findByIdAndUpdate(classify[0]._id, classify[0])
+        if (classifyđTO.stock) {
+            classifyđTO.stock += classify[0].stock
+        }
+        return await this.model.findByIdAndUpdate(classify[0]._id, classifyđTO)
     }
     async updateClassifyByIdClassify(id: string, calc: number): Promise<Classify> {
         const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id) } }])
