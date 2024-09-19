@@ -3,11 +3,16 @@ import { UsersService } from './users.service';
 import { Public, Roles, UserGuard } from './guard/user.guard';
 import { Role } from './enum/role.enum';
 import { UserDTO } from './dto/user.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly service: UsersService) { }
+    constructor(
+        private readonly service: UsersService,
+        private readonly mailSrevice: MailerService
+    ) { }
 
     @Public()
     @Post('/register')
@@ -55,6 +60,33 @@ export class UsersController {
     @Roles(Role.ADMIN)
     async updateByAdmin() {
 
+    }
+
+    @Public()
+    @Post("sendOTP")
+    async getOTP(@Body() user) {
+        let randomOTPnumber = ""
+        for (let index = 0; index < 6; index++) {
+            randomOTPnumber += Math.floor(Math.random() * 10).toString()
+            // console.log(Math.round(Math.));
+        }
+        try {
+            await this.mailSrevice.sendMail({
+                to: user.userName, // list of receivers
+                from: 'noreply@osshop.com', // sender address
+                subject: 'OTP from os shop ✔', // Subject line
+                text: 'welcome',
+                html: `
+                    <div class="content">
+                    <p>Dear </p>
+
+            <p>Your OTP IS ${randomOTPnumber}</p>
+        </div>`
+            })
+            return randomOTPnumber
+        } catch (error) {
+            throw new ExceptionsHandler
+        }
     }
 
 
