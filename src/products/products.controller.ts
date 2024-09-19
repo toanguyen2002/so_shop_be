@@ -47,9 +47,6 @@ export class ProductsController {
         // console.log(rs);
         const start = 20 * (page - 1)
         const end = start + 20
-        // console.log(start == 0 ? start : start + 1);
-        // console.log(end);
-
         return (await this.productService.getProductBySellerId(seller)).slice(start == 0 ? start : start + 1, end)
     }
 
