@@ -533,6 +533,13 @@ export class ProductsService {
                 foreignField: "product",
                 as: "decriptions"
             }
+        }, {
+            $lookup: {
+                from: "categories",
+                localField: "cate",
+                foreignField: "_id",
+                as: "categories"
+            }
         }])
     }
 
