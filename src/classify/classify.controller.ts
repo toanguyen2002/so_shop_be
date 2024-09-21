@@ -16,7 +16,8 @@ export class ClassifyController {
         console.log(classifyDTO);
         return await this.classifyService.addClassify(classifyDTO)
     }
-    @Roles(Role.SELLER)
+    // @Roles(Role.SELLER)
+    @Public()
     @Post('update')
     async updateClassify(@Body() classifyDTO: ClassifyUpdateAllAttDTO) {
         return await this.classifyService.updateClassify(classifyDTO)
