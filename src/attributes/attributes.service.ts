@@ -21,6 +21,11 @@ export class AttributesService {
         const rs = await this.model.findByIdAndUpdate(attributeDTO.id, attributeDTO, { new: true })
         return rs
     }
+    async deleteAttribute(id: string): Promise<Attributes> {
+        const rs = await this.model.findByIdAndDelete(id)
+        return rs
+    }
+
 
 
 }

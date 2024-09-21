@@ -20,4 +20,9 @@ export class DecriptionService {
     async updateDecription(decripDTO: DecriptionUpdateDTO): Promise<Decription> {
         return await this.model.findByIdAndUpdate(decripDTO.id, decripDTO, { new: true })
     }
+
+
+    async deleteDecription(id: string): Promise<Decription> {
+        return await this.model.findByIdAndDelete(id)
+    }
 }

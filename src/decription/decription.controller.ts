@@ -25,4 +25,11 @@ export class DecriptionController {
     async update(@Body() decrip: DecriptionUpdateDTO): Promise<Decription> {
         return await this.DecripService.updateDecription(decrip)
     }
+
+
+    @Roles(Role.SELLER)
+    @Get("/delete/:id")
+    async delete(@Param("id") id: string): Promise<Decription> {
+        return await this.DecripService.deleteDecription(id)
+    }
 }
