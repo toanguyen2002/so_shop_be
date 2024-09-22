@@ -97,6 +97,17 @@ export class ProductsController {
     }
 
 
+    @Public()
+    @Get("/brand/:name")
+    async getProductsByBrand(@Param("name") name: string): Promise<Products[]> {
+        return this.productService.findProductByBrand(name);
+    }
+    @Public()
+    @Get("/cate/:name")
+    async getProductsByCate(@Param("name") name: string): Promise<Products[]> {
+        return this.productService.findProductByCate(name);
+    }
+
     @Roles(Role.SELLER)
     @Post("/updateProducts")
     async updateProducts(@Body() ProductsDTO: ProductsUpdateDTO): Promise<Products> {

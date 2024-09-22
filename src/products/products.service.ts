@@ -536,4 +536,44 @@ export class ProductsService {
         return this.model.findByIdAndUpdate(productDTO.id, productDTO)
     }
 
+    async findProductByBrand(brand: string): Promise<Products[]> {
+        return this.model.aggregate([{ $match: { brand: brand } }])
+    }
+
+    async findProductByCate(cate: string): Promise<Products[]> {
+        return this.model.aggregate([
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "cate",
+                    foreignField: "_id",
+                    as: "cate"
+                }
+            },
+            {
+                $unwind: "$cate"
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: [
+                            {
+                                productName: '$productName',
+                                brand: '$brand',
+                                selled: '$selled',
+                                dateUp: '$dateUp',
+                                classifies: '$classifies',
+                                decriptions: '$decriptions',
+                                seller: "$seller"
+                            },
+                            '$cate'
+                        ]
+                    }
+                }
+            }, {
+                $match: { cate: cate }
+            }
+        ])
+    }
+
 }
