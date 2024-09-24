@@ -29,7 +29,7 @@ export class CartService {
                             if (await this.calcUpdate(item)) {
                                 return {
                                     status: "thêm thành công",
-                                    product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                                    product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0], { new: true })
                                 }
                             } else {
                                 return {
@@ -45,7 +45,7 @@ export class CartService {
                     if (await this.calcUpdate(item)) {
                         return {
                             status: "thêm thành công",
-                            product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                            product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0], { new: true })
                         }
                     } else {
                         return {
@@ -61,7 +61,7 @@ export class CartService {
             if (await this.calcUpdate(item)) {
                 return {
                     status: "thêm thành công",
-                    product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
+                    product: await this.model.findByIdAndUpdate(cart[0]._id, cart[0], { new: true })
                 }
             } else {
                 return {

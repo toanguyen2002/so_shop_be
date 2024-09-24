@@ -107,6 +107,14 @@ export class ProductsService {
         }
         return (await this.model.aggregate(pipeline).exec()).slice(0, 10);
     }
+    async getProductByIdForPayment(id: string): Promise<any> {
+        return await this.model.aggregate([{
+            $match:
+            {
+                _id: new mongoose.Types.ObjectId(id)
+            }
+        }])
+    }
     async getProductById(id: string): Promise<any> {
         return await this.model.aggregate([{
             $match:
@@ -571,7 +579,7 @@ export class ProductsService {
                     }
                 }
             }, {
-                $match: { cate: cate }
+                $match: { categoriesName: cate }
             }
         ])
     }

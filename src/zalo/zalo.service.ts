@@ -41,16 +41,17 @@ export class ZaloService {
                 const trade = await this.tradeService.getTradeByStringId(e)
                 trades.push(trade)
                 total += trade.balence
-                await Promise.all(trade.products.map(async (p:any) => {
+                await Promise.all(trade.products.map(async (p: any) => {
                     ids.push(p)
                 }))
             })
         )
-        await Promise.all( ids.map(async (e) => {
-            console.log(e);
-        
-            const product = await this.productService.getProductById(e.productId)
-            
+
+        await Promise.all(ids.map(async (e) => {
+
+            const product = await this.productService.getProductByIdForPayment(e.productId)
+            console.log(e.productId);
+
             items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
         }))
         const embed_data = {};
@@ -101,7 +102,7 @@ export class ZaloService {
                 let dataJson = JSON.parse(dataStr, (key, value) => {
                     return value;
                 });
-                console.log(dataJson);
+                // console.log(dataJson);
 
                 await Promise.all(dataJson.app_user.split("_").map(async (e: string) => {
                     await this.tradeService.successPayment(e)
@@ -116,8 +117,6 @@ export class ZaloService {
             result.return_code = 0;
             result.return_message = ex.message;
         }
-
-
         res.json(result);
     }
 
@@ -149,7 +148,7 @@ export class ZaloService {
         let data = params.app_id + "|" + params.zp_trans_id + "|" + params.amount + "|" + params.description + "|" + params.timestamp;
         params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
 
-        console.log(params);
+        // console.log(params);
 
         try {
             const rs = await axios.post(config.endpoint, null, { params })
