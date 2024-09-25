@@ -7,7 +7,6 @@ import { TradeDTO } from './dto/trade.dto';
 export class TradeService {
     constructor(@InjectModel(Trade.name) private readonly model: Model<TradeDocument>,) { }
     async addTrade(tradeDTO: TradeDTO): Promise<Trade> {
-
         return await new this.model(tradeDTO).save()
     }
     async getTradeBySellerId(tradeDTO: TradeDTO): Promise<Trade[]> {

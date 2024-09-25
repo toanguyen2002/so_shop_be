@@ -55,7 +55,7 @@ export class ZaloService {
             items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
         }))
         const embed_data = {};
-        const url = "https://97e8-118-69-125-122.ngrok-free.app"
+
         const transID = Math.floor(Math.random() * 1000000);
         const order = {
             app_id: config.app_id,
@@ -68,7 +68,7 @@ export class ZaloService {
             description: `${idTrans}`,
             bank_code: "",
             mac: "",
-            callback_url: `${url}/trade/callback`
+            callback_url: `${process.env.URLPAYMENT}/trade/callback`
         };
         // appid|app_trans_id|appuser|amount|apptime|embeddata|item
         const data = config.app_id + "|" + order.app_trans_id + "|" + order.app_user + "|" + order.amount + "|" + order.app_time + "|" + order.embed_data + "|" + order.item;

@@ -56,33 +56,57 @@ export class TradeController {
                     const classify = await this.classifyService.getOnelassifyById(item.classifyId);
                     const balance = classify.price * item.numberProduct;
                     totalBalence += balance;
-                    balanceEach += balance
+                    balanceEach += balance;
                 }))
                 trade.push({ seller: i.seller, items: i.items, balanceEach: balanceEach })
             });
             await Promise.all(promises);
             await Promise.all(trade.map(async (item: any) => {
-                const calc = await this.calcItem(item.items)
-                this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
-                const tradeId = "TD" + randomUUID().slice(0, 10)
-                if (calc) {
-                    const trade = await this.tradeService.addTrade({
-                        tradeId: tradeId,
-                        tradeTitle: "Mua hàng",
-                        buyer: tradeDTO.buyer,
-                        seller: item.seller,
-                        products: item.items,
-                        sellerAccept: false, //default false => true ng bán chấp nhận và đang lien he de giao hàng
-                        tradeStatus: false,  //đang thanh toán or 
-                        payment: false,//chưa thanh toán
-                        isCancel: false,//huỷ gd
-                        balence: item.balanceEach,
-                        address: tradeDTO.address,
-                        dateTrade: new Date()
-                    })
-                    tradeIds.push(tradeId)
+                if (tradeDTO.from == "cart") {
+                    // const calc = await this.calcItem(item.items)
+                    const calc = await this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
+                    const tradeId = "TD" + randomUUID().slice(0, 10)
+                    if (calc) {
+                        const trade = await this.tradeService.addTrade({
+                            tradeId: tradeId,
+                            tradeTitle: "Mua hàng",
+                            buyer: tradeDTO.buyer,
+                            seller: item.seller,
+                            products: item.items,
+                            sellerAccept: false, //default false => true ng bán chấp nhận và đang lien he de giao hàng
+                            tradeStatus: false,  //đang thanh toán or 
+                            payment: false,//chưa thanh toán
+                            isCancel: false,//huỷ gd
+                            balence: item.balanceEach,
+                            address: tradeDTO.address,
+                            dateTrade: new Date(),
+                            from: tradeDTO.from
+                        })
+                        tradeIds.push(tradeId)
+                    }
+                } else {
+                    const calc = await this.calcItem(item.items)
+                    // await this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
+                    const tradeId = "TD" + randomUUID().slice(0, 10)
+                    if (calc) {
+                        const trade = await this.tradeService.addTrade({
+                            tradeId: tradeId,
+                            tradeTitle: "Mua hàng",
+                            buyer: tradeDTO.buyer,
+                            seller: item.seller,
+                            products: item.items,
+                            sellerAccept: false, //default false => true ng bán chấp nhận và đang lien he de giao hàng
+                            tradeStatus: false,  //đang thanh toán or 
+                            payment: false,//chưa thanh toán
+                            isCancel: false,//huỷ gd
+                            balence: item.balanceEach,
+                            address: tradeDTO.address,
+                            dateTrade: new Date(),
+                            from: tradeDTO.from
+                        })
+                        tradeIds.push(tradeId)
+                    }
                 }
-
             }
             ))
         }
@@ -189,12 +213,12 @@ export class TradeController {
     async removeItemsAfterTrade(buyer: string, seller: string, items: any): Promise<any> {
         await Promise.all(items.map(async (item: { productId: string; numberProduct: number; classifyId: string; }) => {
             try {
-                await this.productsService.calcProduct(item.productId, item.numberProduct)
-                const updateClassify = await this.classifyService.calcClassify(item.classifyId, -item.numberProduct)
-                this.cartsService.removeItemsAfterTrade(buyer, seller, item)
-                if (!updateClassify) {
-                    return false
-                }
+                // await this.productsService.calcProduct(item.productId, item.numberProduct)
+                // const updateClassify = await this.classifyService.calcClassify(item.classifyId, -item.numberProduct)
+                await this.cartsService.removeItemsAfterTrade(buyer, seller, item)
+                // if (!updateClassify) {
+                //     return false
+                // }
                 return true
             } catch (error) {
                 return false

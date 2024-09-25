@@ -75,8 +75,8 @@ export class ClassifyService {
         }
     }
     async calcClassify(id: string, calcClassify: number): Promise<any> {
-        console.log(id);
-        console.log(calcClassify);
+        // console.log(id);
+        // console.log(calcClassify);
         const classify = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id.toString()) } }])
 
 
