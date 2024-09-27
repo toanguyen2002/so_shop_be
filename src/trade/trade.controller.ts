@@ -2,7 +2,7 @@ import { Body, Controller, forwardRef, Get, Inject, Post, Req, Res, UploadedFile
 import { Refund, TradeDTO } from './dto/trade.dto';
 import { HistoryService } from 'src/history/history.service';
 import { TradeService } from './trade.service';
-import { Public } from 'src/users/guard/user.guard';
+import { Public, Roles } from 'src/users/guard/user.guard';
 import { WalletService } from 'src/wallet/wallet.service';
 import { Products } from 'src/products/schema/product.schema';
 import { ProductsService } from 'src/products/products.service';
@@ -14,6 +14,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ZaloService } from 'src/zalo/zalo.service';
+import { Role } from 'src/users/enum/role.enum';
 
 @Controller('trade')
 export class TradeController {
@@ -116,7 +117,7 @@ export class TradeController {
         }
     }
 
-    @Public()
+    @Roles(Role.BUYER)
     @Post("accept")
     async acceptTrade(@Body() tradeDTO: TradeDTO) {
         return await this.tradeService.acceptTrade(tradeDTO)
@@ -145,7 +146,27 @@ export class TradeController {
             }
         }
     }
-
+    @Public()
+    @Post("updateStatus")
+    async updateStatusTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
+        const trade = await this.tradeService.getTradeByStringId(tradeDTO.tradeId)
+        if (trade.payment) {
+            await this.updateCancel(trade)
+            await this.wallerService.increBalance({ user: tradeDTO.seller, balance: tradeDTO.balence })
+            await this.tradeService.cancelTrade(tradeDTO)
+            return {
+                code: 200,
+                title: "cancel success"
+            }
+        } else {
+            this.updateCancel(trade)
+            await this.tradeService.cancelTrade(tradeDTO)
+            return {
+                code: 200,
+                title: "cancel success"
+            }
+        }
+    }
     @Public()
     @Post("payment")
     async payment(@Body() tradeids: any): Promise<any> {

@@ -54,7 +54,9 @@ export class ZaloService {
 
             items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
         }))
-        const embed_data = {};
+        const embed_data = {
+            redirecturl: "https://facebook.com"
+        };
 
         const transID = Math.floor(Math.random() * 1000000);
         const order = {
@@ -68,7 +70,7 @@ export class ZaloService {
             description: `${idTrans}`,
             bank_code: "",
             mac: "",
-            callback_url: `${process.env.URLPAYMENT}/trade/callback`
+            callback_url: `${process.env.URLPAYMENT}/trade/callback`,
         };
         // appid|app_trans_id|appuser|amount|apptime|embeddata|item
         const data = config.app_id + "|" + order.app_trans_id + "|" + order.app_user + "|" + order.amount + "|" + order.app_time + "|" + order.embed_data + "|" + order.item;
@@ -99,7 +101,7 @@ export class ZaloService {
                 result.return_message = "mac not equal";
             }
             else {
-                let dataJson = JSON.parse(dataStr, (key, value) => {
+                let dataJson = JSON.parse(dataStr, (_key, value) => {
                     return value;
                 });
                 // console.log(dataJson);
@@ -147,8 +149,6 @@ export class ZaloService {
         };
         let data = params.app_id + "|" + params.zp_trans_id + "|" + params.amount + "|" + params.description + "|" + params.timestamp;
         params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
-
-        // console.log(params);
 
         try {
             const rs = await axios.post(config.endpoint, null, { params })
