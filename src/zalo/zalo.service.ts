@@ -7,6 +7,7 @@ import { Refund } from 'src/trade/dto/trade.dto';
 import { TradeService } from 'src/trade/trade.service';
 import { ProductsService } from 'src/products/products.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class ZaloService {
     constructor(
@@ -14,6 +15,7 @@ export class ZaloService {
         private readonly tradeService: TradeService,
         private readonly productService: ProductsService,
         private readonly mailService: MailerService,
+        private readonly userService: UsersService,
 
     ) { }
     formatDate(date: Date) {
@@ -104,12 +106,10 @@ export class ZaloService {
                 let dataJson = JSON.parse(dataStr, (_key, value) => {
                     return value;
                 });
-                // console.log(dataJson);
-
                 await Promise.all(dataJson.app_user.split("_").map(async (e: string) => {
                     await this.tradeService.successPayment(e)
                     const trade = await this.tradeService.getTradeByStringTradeId(e);
-                    this.sendEmail(trade[0].buyer, e)
+                    await this.sendEmail(trade[0].buyer, e)
                 }))
 
                 result.return_code = 1;
@@ -160,10 +160,12 @@ export class ZaloService {
 
     }
 
-    sendEmail(buyer: string, idTrade: string) {
+    async sendEmail(buyer: string, idTrade: string) {
+        const buyerMailer = await this.userService.getprofile(buyer)
+        // console.log(buyerMailer);
         this.mailService
             .sendMail({
-                to: 'toanguyen200220@gmail.com', // list of receivers
+                to: buyerMailer.userName, // list of receivers
                 from: 'noreply@osshop.com', // sender address
                 subject: 'notify from os shop ✔', // Subject line
                 text: 'welcome',
@@ -171,13 +173,7 @@ export class ZaloService {
                     <div class="content">
                     <p>Dear </p>
 
-            <p>confirm that your order #[${idTrade}] has been successfully canceled as per your request. We apologize for any inconvenience this may have caused and are here to assist you with any future needs.</p>
-
-            <p>If payment has already been processed, a refund will be issued to your original payment method within 7 business days. You will receive a confirmation email once the refund has been processed.</p>
-
-            <p>If you have any further questions or need additional assistance, please feel free to contact us at htkh@os.shop or 099 900 9999.</p>
-
-            <p>Thank you for choosing us. We look forward to serving you in the future.</p>
+            <p>confirm that your order #[${idTrade}] has been successfully</p>
 
             <p>Sincerely</p>
         </div>`

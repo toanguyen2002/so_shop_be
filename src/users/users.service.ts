@@ -67,9 +67,9 @@ export class UsersService {
         }).save();
     }
 
-    async getprofile(userName: string): Promise<User> {
+    async getprofile(id: string): Promise<User> {
         const existUser = await this.model.aggregate([{
-            $match: { _id: new mongoose.Types.ObjectId(userName) }
+            $match: { _id: new mongoose.Types.ObjectId(id) }
         }])
         const { password, ...payload } = existUser[0]
         return payload

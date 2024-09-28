@@ -3,6 +3,7 @@ import { ZaloService } from './zalo.service';
 import { WalletModule } from 'src/wallet/wallet.module';
 import { TradeModule } from 'src/trade/trade.module';
 import { ProductsModule } from 'src/products/products.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   providers: [ZaloService],
@@ -10,7 +11,8 @@ import { ProductsModule } from 'src/products/products.module';
   imports: [
     WalletModule,
     forwardRef(() => TradeModule),
-    forwardRef(() => ProductsModule)
+    forwardRef(() => ProductsModule),
+    forwardRef(() => UsersModule),
   ]
 })
 export class ZaloModule { }
