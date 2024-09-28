@@ -34,10 +34,10 @@ export class TradeService {
         }]))
     }
 
-    async getTradeByBuyerId(tradeDTO: TradeDTO): Promise<Trade> {
+    async getTradeByBuyerId(id: string): Promise<Trade[]> {
         return await this.model.aggregate(([{
-            $match: { buyer: new mongoose.Types.ObjectId(tradeDTO.buyer) }
-        }]))[0]
+            $match: { buyer: new mongoose.Types.ObjectId(id) }
+        }]))
     }
 
     async cancelTrade(tradeDTO: TradeDTO): Promise<Trade> {

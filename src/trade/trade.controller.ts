@@ -1,4 +1,4 @@
-import { Body, Controller, forwardRef, Get, Inject, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, forwardRef, Get, Inject, Param, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { Refund, TradeDTO } from './dto/trade.dto';
 import { HistoryService } from 'src/history/history.service';
 import { TradeService } from './trade.service';
@@ -15,6 +15,7 @@ import { UsersService } from 'src/users/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ZaloService } from 'src/zalo/zalo.service';
 import { Role } from 'src/users/enum/role.enum';
+import { Trade } from './schema/trade.schema';
 
 @Controller('trade')
 export class TradeController {
@@ -168,6 +169,11 @@ export class TradeController {
         }
     }
     @Public()
+    @Get("/buyer/:id")
+    async getTradeByBuyerId(@Param("id") id: string): Promise<Trade[]> {
+        return await this.tradeService.getTradeByBuyerId(id)
+    }
+    @Public()
     @Post("payment")
     async payment(@Body() tradeids: any): Promise<any> {
         switch (tradeids.method) {
@@ -196,8 +202,6 @@ export class TradeController {
     async refunds(@Body() refund: Refund) {
         return await this.zaloService.refunds(refund);
     }
-
-
     async calcItem(items: any): Promise<any> {
         await Promise.all(items.map(async (item: { productId: string; numberProduct: number; classifyId: string; }) => {
             try {
@@ -269,17 +273,10 @@ export class TradeController {
                     <div class="content">
                     <p>Dear You"}</p>
 
-            <p>confirm that your order #[${tradeDTO.tradeId}] has been successfully canceled as per your request. We apologize for any inconvenience this may have caused and are here to assist you with any future needs.</p>
-
-            <p>If payment has already been processed, a refund will be issued to your original payment method within 7 business days. You will receive a confirmation email once the refund has been processed.</p>
-
-            <p>If you have any further questions or need additional assistance, please feel free to contact us at htkh@ó.shop or 099 900 9999.</p>
-
-            <p>Thank you for choosing us. We look forward to serving you in the future.</p>
+            <p>confirm that your order #[${tradeDTO.tradeId}] has been successfully</p>
 
             <p>Sincerely</p>
         </div>`
             })
     }
-
 }

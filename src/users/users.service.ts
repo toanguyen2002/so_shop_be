@@ -74,7 +74,12 @@ export class UsersService {
         const { password, ...payload } = existUser[0]
         return payload
     }
-
+    async checkMail(userName: string): Promise<User> {
+        const existUser = await this.model.aggregate([{
+            $match: { userName: userName }
+        }])
+        return existUser.length
+    }
     async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
         if (userDTO.password !== undefined) {
             const hash = await bcrypt.hash(userDTO.password, 10);

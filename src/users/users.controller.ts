@@ -64,11 +64,19 @@ export class UsersController {
 
     @Public()
     @Post("sendOTP")
-    async getOTP(@Body() user) {
+    async getOTP(@Body() user: UserDTO) {
+        const exitsUser = await this.service.checkMail(user.userName)
+        console.log(exitsUser);
+
+        if (exitsUser > 0) {
+            return {
+                code: 500,
+                status: "Email is exist in Systerm"
+            }
+        }
         let randomOTPnumber = ""
         for (let index = 0; index < 6; index++) {
             randomOTPnumber += Math.floor(Math.random() * 10).toString()
-            // console.log(Math.round(Math.));
         }
         try {
             await this.mailSrevice.sendMail({
