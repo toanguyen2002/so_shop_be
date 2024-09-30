@@ -11,7 +11,63 @@ export class TradeService {
     }
     async getTradeBySellerId(id: string): Promise<Trade[]> {
         return await this.model.aggregate(([{
-            $match: { seller: new mongoose.Types.ObjectId(id) }
+            $match: { seller: new mongoose.Types.ObjectId(id) },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "buyer",
+                foreignField: "_id",
+                as: "buyers"
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "seller",
+                foreignField: "_id",
+                as: "sellers"
+            }
+        },
+        {
+            $unwind: "$buyers"
+        },
+        {
+            $unwind: "$sellers"
+        },
+        {
+            $replaceRoot: {
+                newRoot: {
+                    $mergeObjects: [
+                        {
+                            _id: "$_id",
+                            brand: "$brand",
+                            sellerAccept: "$sellerAccept",
+                            tradeTitle: "$tradeTitle",
+                            tradeStatus: "$tradeStatus",
+                            payment: "$payment",
+                            balance: "$balance",
+                            products: "$products",
+                            dateTrade: "$dateTrade",
+                            balence: "$balence",
+                            tradeId: "$tradeId",
+                            paymentMethod: "$paymentMethod",
+                        },
+                        {
+                            buyersname: "$buyers.name",
+                            buyersaddress: "$buyers.address",
+                            buyersavata: "$buyers.avata",
+                            buyersuserName: "$buyers.userName"
+                        },
+                        {
+                            sellersname: "$sellers.name",
+                            sellersaddress: "$sellers.address",
+                            sellersavata: "$sellers.avata",
+                            sellersuserName: "$sellers.userName"
+                        }
+                    ]
+                }
+            }
         }]))
     }
     async getTradeByTradeId(tradeDTO: TradeDTO): Promise<any> {
