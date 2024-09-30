@@ -12,6 +12,8 @@ export class TradeDTO {
     dateTrade: Date
     address: string
     from: string
+    paymentMethod: string
+    isTrade: boolean // gd dc là true k là false
 }
 
 export class Refund {

@@ -22,6 +22,8 @@ export class Trade {
     payment: boolean
     @Prop()
     isCancel: boolean
+    @Prop()
+    isTrade: boolean
 
 
     @Prop()
@@ -30,10 +32,12 @@ export class Trade {
     balence: number
     @Prop()
     address: string
+    @Prop()
+    paymentMethod: string
 
 
     @Prop()
-    dateTrade : Date
+    dateTrade: Date
 
 
     @Prop({

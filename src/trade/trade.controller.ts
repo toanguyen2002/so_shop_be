@@ -83,6 +83,8 @@ export class TradeController {
                             address: tradeDTO.address,
                             dateTrade: new Date(),
                             from: tradeDTO.from,
+                            paymentMethod: tradeDTO.paymentMethod,
+                            isTrade: false
                         })
                         tradeIds.push(tradeId)
                     }
@@ -106,7 +108,9 @@ export class TradeController {
                             balence: item.balanceEach,
                             address: tradeDTO.address,
                             dateTrade: new Date(),
-                            from: tradeDTO.from
+                            from: tradeDTO.from,
+                            paymentMethod: tradeDTO.paymentMethod,
+                            isTrade: false
                         })
                         tradeIds.push(tradeId)
                     }
@@ -185,7 +189,6 @@ export class TradeController {
     async payment(@Body() tradeids: any): Promise<any> {
         switch (tradeids.method) {
             case "zalo":
-                console.log(tradeids);
                 return await this.zaloService.payment(tradeids);
             case "cash":
                 return {

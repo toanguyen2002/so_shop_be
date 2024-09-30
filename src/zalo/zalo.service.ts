@@ -50,10 +50,7 @@ export class ZaloService {
         )
 
         await Promise.all(ids.map(async (e) => {
-
             const product = await this.productService.getProductByIdForPayment(e.productId)
-            console.log(e.productId);
-
             items.push({ productName: product[0].productName, numberProduct: e.numberProduct })
         }))
         const embed_data = {
@@ -109,6 +106,8 @@ export class ZaloService {
                 await Promise.all(dataJson.app_user.split("_").map(async (e: string) => {
                     await this.tradeService.successPayment(e)
                     const trade = await this.tradeService.getTradeByStringTradeId(e);
+                    // isTrade
+                    await this.tradeService.updateIsTrade(trade[0].tradeId)
                     await this.sendEmail(trade[0].buyer, e)
                 }))
 
