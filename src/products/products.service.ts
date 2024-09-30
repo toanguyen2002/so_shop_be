@@ -153,6 +153,7 @@ export class ProductsService {
                 newRoot: {
                     $mergeObjects: [
                         {
+                            _id: "$_id",
                             productName: '$productName',
                             brand: '$brand',
                             selled: '$selled',
