@@ -145,169 +145,169 @@ export class ProductsService {
                 as: "decriptions"
             }
         },
-        {
-            $unwind: "$attributes"
-        },
-        {
-            $replaceRoot: {
-                newRoot: {
-                    $mergeObjects: [
-                        {
-                            _id: "$_id",
-                            productName: '$productName',
-                            brand: '$brand',
-                            selled: '$selled',
-                            dateUp: '$dateUp',
-                            classifies: '$classifies',
-                            decriptions: '$decriptions',
-                            seller: "$seller"
-                        },
-                        '$attributes'
-                    ]
-                }
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    productName: "$productName",
-                    brand: '$brand',
-                    selled: '$selled',
-                    dateUp: '$dateUp',
-                    classifies: '$classifies',
-                    decriptions: '$decriptions',
-                    seller: "$seller"
+            // {
+            //     $unwind: "$attributes"
+            // },
+            // {
+            //     $replaceRoot: {
+            //         newRoot: {
+            //             $mergeObjects: [
+            //                 {
+            //                     _id: "$_id",
+            //                     productName: '$productName',
+            //                     brand: '$brand',
+            //                     selled: '$selled',
+            //                     dateUp: '$dateUp',
+            //                     classifies: '$classifies',
+            //                     decriptions: '$decriptions',
+            //                     seller: "$seller"
+            //                 },
+            //                 '$attributes'
+            //             ]
+            //         }
+            //     }
+            // },
+            // {
+            //     $group: {
+            //         _id: {
+            //             productName: "$productName",
+            //             brand: '$brand',
+            //             selled: '$selled',
+            //             dateUp: '$dateUp',
+            //             classifies: '$classifies',
+            //             decriptions: '$decriptions',
+            //             seller: "$seller"
 
-                },
-                attributes: {
-                    $push: {
-                        key: "$key",
-                        value: "$value"
-                    }
-                }
-            }
-        },
-        {
-            $project: {
-                productName: "$_id.productName",
-                brand: "$_id.brand",
-                selled: "$_id.selled",
-                dateUp: "$_id.dateUp",
-                classifies: "$_id.classifies",
-                decriptions: '$_id.decriptions',
-                attributes: 1,
-                seller: "$_id.seller"
-            }
-        },
-        {
-            $unwind: "$classifies"
-        },
-        {
-            $replaceRoot: {
-                newRoot: {
-                    $mergeObjects: [
-                        {
-                            productName: '$productName',
-                            brand: '$brand',
-                            selled: '$selled',
-                            dateUp: '$dateUp',
-                            attributes: '$attributes',
-                            decriptions: '$decriptions',
-                            seller: "$seller"
-                        },
-                        '$classifies'
-                    ]
-                }
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    productName: "$productName",
-                    brand: '$brand',
-                    selled: '$selled',
-                    dateUp: '$dateUp',
-                    attributes: '$attributes',
-                    decriptions: '$decriptions',
-                    seller: "$seller"
+            //         },
+            //         attributes: {
+            //             $push: {
+            //                 key: "$key",
+            //                 value: "$value"
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     $project: {
+            //         productName: "$_id.productName",
+            //         brand: "$_id.brand",
+            //         selled: "$_id.selled",
+            //         dateUp: "$_id.dateUp",
+            //         classifies: "$_id.classifies",
+            //         decriptions: '$_id.decriptions',
+            //         attributes: 1,
+            //         seller: "$_id.seller"
+            //     }
+            // },
+            // {
+            //     $unwind: "$classifies"
+            // },
+            // {
+            //     $replaceRoot: {
+            //         newRoot: {
+            //             $mergeObjects: [
+            //                 {
+            //                     productName: '$productName',
+            //                     brand: '$brand',
+            //                     selled: '$selled',
+            //                     dateUp: '$dateUp',
+            //                     attributes: '$attributes',
+            //                     decriptions: '$decriptions',
+            //                     seller: "$seller"
+            //                 },
+            //                 '$classifies'
+            //             ]
+            //         }
+            //     }
+            // },
+            // {
+            //     $group: {
+            //         _id: {
+            //             productName: "$productName",
+            //             brand: '$brand',
+            //             selled: '$selled',
+            //             dateUp: '$dateUp',
+            //             attributes: '$attributes',
+            //             decriptions: '$decriptions',
+            //             seller: "$seller"
 
-                },
-                classifies: {
-                    $push: {
-                        key: "$key",
-                        value: "$value",
-                        price: "$price",
-                        stock: "$stock"
-                    }
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                productName: "$_id.productName",
-                brand: "$_id.brand",
-                selled: "$_id.selled",
-                dateUp: "$_id.dateUp",
-                attributes: "$_id.attributes",
-                decriptions: '$_id.decriptions',
-                seller: "$_id.seller",
-                classifies: 1
-            }
-        },
-        {
-            $unwind: "$decriptions"
-        },
-        {
-            $replaceRoot: {
-                newRoot: {
-                    $mergeObjects: [
-                        {
-                            productName: '$productName',
-                            brand: '$brand',
-                            selled: '$selled',
-                            dateUp: '$dateUp',
-                            attributes: '$attributes',
-                            classifies: '$classifies',
-                            seller: "$seller"
-                        },
-                        '$decriptions'
-                    ]
-                }
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    productName: "$productName",
-                    brand: '$brand',
-                    selled: '$selled',
-                    dateUp: '$dateUp',
-                    attributes: '$attributes',
-                    classifies: '$classifies',
-                    seller: "$seller"
-                },
-                decriptions: {
-                    $push: {
-                        key: "$key",
-                        value: "$value",
-                    }
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                productName: "$_id.productName",
-                brand: "$_id.brand",
-                selled: "$_id.selled",
-                dateUp: "$_id.dateUp",
-                attributes: "$_id.attributes",
-                classifies: '$_id.classifies',
-                seller: "$_id.seller",
-                decriptions: 1
-            }
-        }
+            //         },
+            //         classifies: {
+            //             $push: {
+            //                 key: "$key",
+            //                 value: "$value",
+            //                 price: "$price",
+            //                 stock: "$stock"
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     $project: {
+            //         _id: 0,
+            //         productName: "$_id.productName",
+            //         brand: "$_id.brand",
+            //         selled: "$_id.selled",
+            //         dateUp: "$_id.dateUp",
+            //         attributes: "$_id.attributes",
+            //         decriptions: '$_id.decriptions',
+            //         seller: "$_id.seller",
+            //         classifies: 1
+            //     }
+            // },
+            // {
+            //     $unwind: "$decriptions"
+            // },
+            // {
+            //     $replaceRoot: {
+            //         newRoot: {
+            //             $mergeObjects: [
+            //                 {
+            //                     productName: '$productName',
+            //                     brand: '$brand',
+            //                     selled: '$selled',
+            //                     dateUp: '$dateUp',
+            //                     attributes: '$attributes',
+            //                     classifies: '$classifies',
+            //                     seller: "$seller"
+            //                 },
+            //                 '$decriptions'
+            //             ]
+            //         }
+            //     }
+            // },
+            // {
+            //     $group: {
+            //         _id: {
+            //             productName: "$productName",
+            //             brand: '$brand',
+            //             selled: '$selled',
+            //             dateUp: '$dateUp',
+            //             attributes: '$attributes',
+            //             classifies: '$classifies',
+            //             seller: "$seller"
+            //         },
+            //         decriptions: {
+            //             $push: {
+            //                 key: "$key",
+            //                 value: "$value",
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     $project: {
+            //         _id: 0,
+            //         productName: "$_id.productName",
+            //         brand: "$_id.brand",
+            //         selled: "$_id.selled",
+            //         dateUp: "$_id.dateUp",
+            //         attributes: "$_id.attributes",
+            //         classifies: '$_id.classifies',
+            //         seller: "$_id.seller",
+            //         decriptions: 1
+            //     }
+            // }
         ])
     }
     async getProductBySellerId(id: string): Promise<any> {
