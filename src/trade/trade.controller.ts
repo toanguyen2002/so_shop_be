@@ -82,7 +82,7 @@ export class TradeController {
                             balence: item.balanceEach,
                             address: tradeDTO.address,
                             dateTrade: new Date(),
-                            from: tradeDTO.from
+                            from: tradeDTO.from,
                         })
                         tradeIds.push(tradeId)
                     }
@@ -90,6 +90,8 @@ export class TradeController {
                     const calc = await this.calcItem(item.items)
                     // await this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
                     const tradeId = "TD" + randomUUID().slice(0, 10)
+                    console.log(tradeDTO);
+
                     if (calc) {
                         const trade = await this.tradeService.addTrade({
                             tradeId: tradeId,
@@ -174,6 +176,11 @@ export class TradeController {
         return await this.tradeService.getTradeByBuyerId(id)
     }
     @Public()
+    @Get("/seller/:id")
+    async getTradeBysellerId(@Param("id") id: string): Promise<Trade[]> {
+        return await this.tradeService.getTradeBySellerId(id)
+    }
+    @Public()
     @Post("payment")
     async payment(@Body() tradeids: any): Promise<any> {
         switch (tradeids.method) {
@@ -199,7 +206,7 @@ export class TradeController {
     }
     @Public()
     @Post("refunds")
-    async refunds(@Body() refund: Refund) {
+    async refunds(@Body() refund: Refund): Promise<any> {
         return await this.zaloService.refunds(refund);
     }
     async calcItem(items: any): Promise<any> {

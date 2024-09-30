@@ -9,9 +9,9 @@ export class TradeService {
     async addTrade(tradeDTO: TradeDTO): Promise<Trade> {
         return await new this.model(tradeDTO).save()
     }
-    async getTradeBySellerId(tradeDTO: TradeDTO): Promise<Trade[]> {
+    async getTradeBySellerId(id: string): Promise<Trade[]> {
         return await this.model.aggregate(([{
-            $match: { seller: new mongoose.Types.ObjectId(tradeDTO.seller) }
+            $match: { seller: new mongoose.Types.ObjectId(id) }
         }]))
     }
     async getTradeByTradeId(tradeDTO: TradeDTO): Promise<any> {
@@ -37,6 +37,58 @@ export class TradeService {
     async getTradeByBuyerId(id: string): Promise<Trade[]> {
         return await this.model.aggregate(([{
             $match: { buyer: new mongoose.Types.ObjectId(id) }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "buyer",
+                foreignField: "_id",
+                as: "buyers"
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "seller",
+                foreignField: "_id",
+                as: "sellers"
+            }
+        },
+        {
+            $unwind: "$buyers"
+        },
+        {
+            $unwind: "$sellers"
+        },
+        {
+            $replaceRoot: {
+                newRoot: {
+                    $mergeObjects: [
+                        {
+                            _id: "$_id",
+                            brand: "$brand",
+                            sellerAccept: "$sellerAccept",
+                            tradeTitle: "$tradeTitle",
+                            tradeStatus: "$tradeStatus",
+                            payment: "$payment",
+                            balance: "$balance",
+                            products: "$products"
+                        },
+                        {
+                            buyersname: "$buyers.name",
+                            buyersaddress: "$buyers.address",
+                            buyersavata: "$buyers.avata",
+                            buyersuserName: "$buyers.userName"
+                        },
+                        {
+                            sellersname: "$sellers.name",
+                            sellersaddress: "$sellers.address",
+                            sellersavata: "$sellers.avata",
+                            sellersuserName: "$sellers.userName"
+                        }
+                    ]
+                }
+            }
         }]))
     }
 
@@ -50,7 +102,10 @@ export class TradeService {
     }
 
     async getTradeById(tradeDTO: TradeDTO): Promise<Trade> {
-        const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
+        const rs = await this.model.aggregate([
+            { $match: { tradeId: tradeDTO.tradeId } },
+
+        ])
         if (rs.length == 0) {
             return
         }
@@ -71,7 +126,6 @@ export class TradeService {
         if (rs[0].sellerAccept) {
             return false
         }
-
         rs[0].sellerAccept = true
         return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
     }
@@ -112,6 +166,73 @@ export class TradeService {
     //     ] )
 
 
-
+    //     db.trades.aggregate([
+    //         {
+    //             $match: { }
+    //         },
+    //         {
+    //             $lookup: {
+    //                 from: "users",
+    //                 localField: "buyer",
+    //                 foreignField: "_id",
+    //                 as: "buyers"
+    //           }
+    //         },
+    //         {
+    //             $lookup: {
+    //                 from: "users",
+    //                 localField: "seller",
+    //                 foreignField: "_id",
+    //                 as: "sellers"
+    //           }
+    //         },
+    //         {
+    //             $unwind: "$buyers"
+    //         },
+    //         {
+    //             $replaceRoot: {
+    //                 newRoot: {
+    //                     $mergeObjects: [
+    //                         {
+    //                             _id: "$_id",
+    //                             brand: "$brand",
+    //                             sellerAccept: "$sellerAccept",
+    //                             tradeTitle: "$tradeTitle",
+    //                             tradeStatus: "$tradeStatus",
+    //                             payment: "$payment",
+    //                             balance: "$balance", // Corrected spelling
+    //                             products: "$products",
+    //                             sellers: "$sellers"
+    //                 },
+    //                         { buyers: "$buyers" } // Merged sellers separately
+    //                     ]
+    //                 }
+    //             }
+    //         },
+    //         {
+    //             $unwind: "$sellers"
+    //           }, {
+    //             $replaceRoot: {
+    //                 newRoot: {
+    //                     $mergeObjects: [
+    //                         {
+    //                             brand: "$brand",
+    //                             sellerAccept: "$sellerAccept",
+    //                             tradeTitle: "$tradeTitle",
+    //                             tradeStatus: "$tradeStatus",
+    //                             payment: "$payment",
+    //                             balance: "$balance", // Corrected spelling
+    //                             products: "$products",
+    //                             buyersname: "$buyers.name",
+    //                             buyersaddress: "$buyers.address",
+    //                             buyersavata: "$buyers.avata",
+    //                             buyersuserName: "$buyers.userName",
+    //                         },
+    //                         { sellers: "$sellers" } // Merged sellers separately
+    //                     ]
+    //                 }
+    //             }
+    //         }
+    //     ])
 
 }
