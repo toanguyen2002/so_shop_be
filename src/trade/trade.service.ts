@@ -72,7 +72,11 @@ export class TradeService {
                             tradeStatus: "$tradeStatus",
                             payment: "$payment",
                             balance: "$balance",
-                            products: "$products"
+                            products: "$products",
+                            dateTrade: "$dateTrade",
+                            balence: "$balence",
+                            tradeId: "$tradeId",
+                            paymentMethod: "$paymentMethod",
                         },
                         {
                             buyersname: "$buyers.name",
