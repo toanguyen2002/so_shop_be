@@ -52,6 +52,7 @@ export class TradeService {
                             balence: "$balence",
                             tradeId: "$tradeId",
                             paymentMethod: "$paymentMethod",
+                            isCancel: "$isCancel",
                         },
                         {
                             buyersname: "$buyers.name",
@@ -63,7 +64,8 @@ export class TradeService {
                             sellersname: "$sellers.name",
                             sellersaddress: "$sellers.address",
                             sellersavata: "$sellers.avata",
-                            sellersuserName: "$sellers.userName"
+                            sellersuserName: "$sellers.userName",
+                            sellerId: "$sellers._id"
                         }
                     ]
                 }
@@ -184,11 +186,8 @@ export class TradeService {
     //người bán đồng ý mua hàng
     async acceptTrade(tradeDTO: TradeDTO): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: tradeDTO.tradeId } }])
-        if (rs[0].sellerAccept) {
-            return false
-        }
         rs[0].sellerAccept = true
-        return await this.model.findByIdAndUpdate(rs[0]._id, rs[0])
+        return await this.model.findByIdAndUpdate(rs[0]._id, rs[0], { new: true })
     }
 
     //trang thai giao dich

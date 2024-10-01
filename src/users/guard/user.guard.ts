@@ -11,9 +11,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Role } from '../enum/role.enum';
 export const IS_PUBLIC_KEY = 'isPublic';
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 export const ROLES_KEY = 'roles';
+
+
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
+
+
 @Injectable()
 export class UserGuard implements CanActivate {
     constructor(private jwtService: JwtService, private reflector: Reflector) { }

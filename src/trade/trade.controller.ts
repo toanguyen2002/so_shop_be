@@ -125,8 +125,10 @@ export class TradeController {
     }
 
     @Roles(Role.BUYER)
+    // @Public()
     @Post("accept")
     async acceptTrade(@Body() tradeDTO: TradeDTO) {
+        console.log(tradeDTO);
         return await this.tradeService.acceptTrade(tradeDTO)
     }
 
