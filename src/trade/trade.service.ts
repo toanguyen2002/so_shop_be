@@ -133,18 +133,20 @@ export class TradeService {
                             balence: "$balence",
                             tradeId: "$tradeId",
                             paymentMethod: "$paymentMethod",
+                            isCancel: "$isCancel"
                         },
                         {
                             buyersname: "$buyers.name",
                             buyersaddress: "$buyers.address",
                             buyersavata: "$buyers.avata",
-                            buyersuserName: "$buyers.userName"
+                            buyersuserName: "$buyers.userName",
                         },
                         {
                             sellersname: "$sellers.name",
                             sellersaddress: "$sellers.address",
                             sellersavata: "$sellers.avata",
-                            sellersuserName: "$sellers.userName"
+                            sellersuserName: "$sellers.userName",
+                            sellerId: "$sellers._id"
                         }
                     ]
                 }
@@ -200,7 +202,7 @@ export class TradeService {
     }
     async updateIsTrade(id: string): Promise<any> {
         const rs = await this.model.aggregate([{ $match: { tradeId: id.toString() } }])
-        console.log(rs);
+        // console.log(rs);
         rs[0].isTrade = true
         return await this.model.findByIdAndUpdate(rs[0]._id, rs[0], { new: true })
     }

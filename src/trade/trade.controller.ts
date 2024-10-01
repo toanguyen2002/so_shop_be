@@ -134,8 +134,6 @@ export class TradeController {
     @Post("cancel")
     async cancelTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
         const trade = await this.tradeService.getTradeByStringId(tradeDTO.tradeId)
-        console.log();
-
         if (trade.payment) {
             await this.updateCancel(trade)
             await this.wallerService.increBalance({ user: tradeDTO.buyer, balance: tradeDTO.balence })
