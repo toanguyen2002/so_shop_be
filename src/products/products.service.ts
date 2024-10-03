@@ -81,6 +81,7 @@ export class ProductsService {
             $group: {
                 _id: "$_id",
                 productName: { $first: "$productName" },
+                images: { $first: "$images" },
                 cate: { $first: "$cate" },
                 seller: { $first: "$seller" },
                 brand: { $first: "$brand" },
