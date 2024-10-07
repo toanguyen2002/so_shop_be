@@ -25,6 +25,11 @@ export class ZaloService {
         return `${yy}${MM}${dd}`;
     }
     async payment(trade: any) {
+        let total = 0
+        const trades = []
+        const ids = []
+        const items = [];
+        let idTrans = ""
         // APP INFO
         const config = {
             app_id: "2553",
@@ -32,11 +37,7 @@ export class ZaloService {
             key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
             endpoint: "https://sb-openapi.zalopay.vn/v2/create"
         };
-        let total = 0
-        const trades = []
-        const ids = []
-        const items = [];
-        let idTrans = ""
+
         await Promise.all(
             trade.tradeId.map(async (e: any, i: number) => {
                 idTrans += i == 0 ? `${e}` : `_${e}`

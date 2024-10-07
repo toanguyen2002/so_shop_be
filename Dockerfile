@@ -23,17 +23,18 @@ FROM node:22.3.0-alpine3.19 AS run
 WORKDIR /user/src/app
 
 ENV \
-    PORT=4000 \ 
+    PORT=3000 \ 
     NODE_ENV=production \ 
     DEMO_ENV=DEMO_ENV \ 
-    MONGO_URI=mongodb://host.docker.internal:27017/osdtb \
-    AWS_ACCESS_KEY_ID=AKIAU2HPBJXX7HS52FSO\
-    AWS_SECRET_ACCESS_KEY=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\
+    # MONGO_URI=mongodb://host.docker.internal:27017/osdtb \
+    MONGO_URI=mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority\
+    AWS_ACCESS_KEY_ID=\
+    AWS_SECRET_ACCESS_KEY=\
     AWS_REGION=us-east-1\
     AWS_BUCKET_NAME=doantotnghiepiuh\
     AWS_URL_RETURN_IMAGE=https://doantotnghiepbucket.s3.amazonaws.com\
     MAIL_USERNAME=toanguyen120921@gmail.com\
-    MAIL_PASSWORD='pkyw ypxj uqrf qmno'
+    MAIL_PASSWORD=
 
 COPY --from=build /user/src/app/dist ./dist
 COPY --from=build /user/src/app/node_modules ./node_modules

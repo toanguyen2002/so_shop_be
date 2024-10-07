@@ -111,25 +111,26 @@ export class CartService {
     async removeItemsAfterTrade(buyer: string, seller: string, item: any): Promise<any> {
         const cart = await this.model.aggregate([
             { $match: { buyer: new mongoose.Types.ObjectId(buyer) } }
-        ])
-        if (cart.length > 0) {
-            for (let i = 0; i < cart[0].products.length; i++) {
-                if (cart[0].products[i].seller == seller) {
-                    let lengthItem = await cart[0]?.products[i]?.items?.length;
-                    for (let j = 0; j < lengthItem; j++) {
-                        console.log(cart[0].products[i].items.length);
-                        if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
-                            cart[0].products[i].items.splice(j, 1)
-                            if (cart[0].products[i].items.length == 0) {
-                                cart[0].products.splice(i, 1)
-                            }
-                            return await this.model.findByIdAndUpdate(cart[0]._id, cart[0])
-                        }
+        ]);
+        item.map((it) => {
+            let products = cart[0].products;
+            for (let i = 0; i < products.length; i++) {
+                if (products[i].seller === seller) {
+                    // Filter out the items that do not match the item conditions
+                    products[i].items = products[i].items.filter((cartItem: any) => {
+                        return !(cartItem.productId === it.productId && cartItem.classifyId === it.classifyId);
+                    });
+
+                    // If no items are left, remove the product
+                    if (products[i].items.length === 0) {
+                        products.splice(i, 1);
                     }
                 }
             }
-        }
 
+        })
+        console.log(cart[0].products);
+        return await this.model.findByIdAndUpdate(cart[0]._id, cart[0], { new: true });
     }
 
     async getCartByBuyerId(id: string): Promise<Cart> {

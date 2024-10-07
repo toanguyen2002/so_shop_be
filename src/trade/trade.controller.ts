@@ -90,10 +90,8 @@ export class TradeController {
                     }
                 } else {
                     const calc = await this.calcItem(item.items)
-                    // await this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
+                    await this.removeItemsAfterTrade(tradeDTO.buyer, item.seller, item.items)
                     const tradeId = "TD" + randomUUID().slice(0, 10)
-                    console.log(tradeDTO);
-
                     if (calc) {
                         const trade = await this.tradeService.addTrade({
                             tradeId: tradeId,
@@ -246,20 +244,8 @@ export class TradeController {
 
 
     async removeItemsAfterTrade(buyer: string, seller: string, items: any): Promise<any> {
-        await Promise.all(items.map(async (item: { productId: string; numberProduct: number; classifyId: string; }) => {
-            try {
-                // await this.productsService.calcProduct(item.productId, item.numberProduct)
-                // const updateClassify = await this.classifyService.calcClassify(item.classifyId, -item.numberProduct)
-                await this.cartsService.removeItemsAfterTrade(buyer, seller, item)
-                // if (!updateClassify) {
-                //     return false
-                // }
-                return true
-            } catch (error) {
-                return false
-            }
-        }))
-        return true
+        await this.cartsService.removeItemsAfterTrade(buyer, seller, items);
+        return true;
     }
 
     async updateCancel(handleCancel: any) {
