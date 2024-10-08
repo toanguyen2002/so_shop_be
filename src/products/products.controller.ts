@@ -51,6 +51,13 @@ export class ProductsController {
         return (await this.productService.getProductBySellerId(seller)).slice(start == 0 ? start : start + 1, end)
     }
 
+
+    @Public()
+    @Get("/number")
+    async numberOfP(): Promise<any> {
+        return (await this.productService.getNumProducts)
+    }
+
     @Public()
     @Get("dynamicfind")
     async handleFind(@Req() req: any) {

@@ -48,6 +48,9 @@ export class ProductsService {
     async getProducts(): Promise<Products[]> {
         return (await this.model.find().exec()).slice(0, 20);
     }
+    async getNumProducts(): Promise<any> {
+        return (await this.model.find().exec()).length;
+    }
     async getProductsForMainPage(): Promise<Products[]> {
         return (await this.model.find().exec()).slice(0, 20);
     }

@@ -24,8 +24,6 @@ export class CartService {
                     for (let j = 0; j < lengthItem; j++) {
                         if (cart[0].products[i].items[j].productId == item.productId && cart[0].products[i].items[j].classifyId == item.classifyId) {
                             cart[0].products[i].items[j].numberProduct += item.numberProduct
-                            // console.log("đã có");
-                            // console.log(await this.calcUpdate(item));
                             if (await this.calcUpdate(item)) {
                                 return {
                                     status: "thêm thành công",
@@ -40,8 +38,6 @@ export class CartService {
                         }
                     }
                     cart[0].products[i].items.push(item)
-                    // console.log("thêm mới");
-                    // console.log(await this.calcUpdate(item));
                     if (await this.calcUpdate(item)) {
                         return {
                             status: "thêm thành công",
@@ -116,12 +112,9 @@ export class CartService {
             let products = cart[0].products;
             for (let i = 0; i < products.length; i++) {
                 if (products[i].seller === seller) {
-                    // Filter out the items that do not match the item conditions
                     products[i].items = products[i].items.filter((cartItem: any) => {
                         return !(cartItem.productId === it.productId && cartItem.classifyId === it.classifyId);
                     });
-
-                    // If no items are left, remove the product
                     if (products[i].items.length === 0) {
                         products.splice(i, 1);
                     }
@@ -129,7 +122,6 @@ export class CartService {
             }
 
         })
-        console.log(cart[0].products);
         return await this.model.findByIdAndUpdate(cart[0]._id, cart[0], { new: true });
     }
 
