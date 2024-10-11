@@ -55,7 +55,6 @@ export class UsersController {
         return await this.service.findByIdAndUpdateUser(userDTO)
 
     }
-    @Roles(Role.ADMIN)
     @Post("/admin/update")
     @Roles(Role.ADMIN)
     async updateByAdmin() {

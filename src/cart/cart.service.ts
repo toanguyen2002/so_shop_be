@@ -108,7 +108,7 @@ export class CartService {
         const cart = await this.model.aggregate([
             { $match: { buyer: new mongoose.Types.ObjectId(buyer) } }
         ]);
-        item.map((it) => {
+        item.map((it: { productId: any; classifyId: any; }) => {
             let products = cart[0].products;
             for (let i = 0; i < products.length; i++) {
                 if (products[i].seller === seller) {

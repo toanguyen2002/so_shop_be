@@ -58,6 +58,7 @@ export class UserGuard implements CanActivate {
         const { user } = context.switchToHttp().getRequest();
         // console.log(user);
         // console.log(requiredRoles);
+        // req['user'] = user
 
         if (requiredRoles.some((role) => user.role?.includes(role))) {
             return true;
