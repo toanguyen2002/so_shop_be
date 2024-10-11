@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 import { Categories } from "src/categories/schema/categories.schema";
 import * as mongoose from 'mongoose';
 
-import { Users } from "src/users/schema/user.schema";
+import { Users } from "src/users/schema/users.schema";
 
 
 export type ProductsDocument = Products & Document;

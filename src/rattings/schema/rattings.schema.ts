@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 import { Products } from "src/products/schema/product.schema";
-import { Users } from "src/users/schema/user.schema";
+import { Users } from "src/users/schema/users.schema";
 
 export type RattingsDocument = Rattings & Document
 @Schema()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { UsersDocument, Users } from './schema/user.schema';
+import { UsersDocument, Users } from './schema/users.schema';
 import mongoose, { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { UserDTO } from './dto/user.dto';
