@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Classify, ClassifyDocument } from './schema/classify.schema';
 import mongoose, { Model, Mongoose } from 'mongoose';
 import { ClassifyDTO, ClassifyUpdateAllAttDTO, ClassifyUpdateDTO } from './dto/classify.dto';
-import { SellProductsDTO } from 'src/products/dto/products.dto';
-import { ProductsService } from 'src/products/products.service';
+import { SellProductsDTO } from '../products/dto/products.dto';
+// import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class ClassifyService {

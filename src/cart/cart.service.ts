@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cart, CartDocuemnt } from './schema/cart.schema';
 import mongoose, { Model } from 'mongoose';
-import { ClassifyService } from 'src/classify/classify.service';
-import { ProductsService } from 'src/products/products.service';
+import { ClassifyService } from '../classify/classify.service';
+import { ProductsService } from '../products/products.service';
 
 
 @Injectable()

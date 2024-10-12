@@ -4,15 +4,15 @@ import mongoose, { Model, PipelineStage } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductsDTO, ProductsSearchStringDTO, ProductsUpdateDTO, SellProductsDTO } from './dto/products.dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
-import { ClassifyService } from 'src/classify/classify.service';
-import { WalletService } from 'src/wallet/wallet.service';
-import { WallerDTO } from 'src/wallet/dto/wallet.dto';
+import { ClassifyService } from '../classify/classify.service';
+import { WalletService } from '../wallet/wallet.service';
+// import { WallerDTO } from '../wallet/dto/wallet.dto';
 import { error } from 'console';
-import { TradeService } from 'src/trade/trade.service';
-import * as bcrypt from 'bcrypt';
-import { HistoryService } from 'src/history/history.service';
-import { ClientProxy } from '@nestjs/microservices';
-import { timeout } from 'rxjs';
+import { TradeService } from '../trade/trade.service';
+// import * as bcrypt from 'bcrypt';
+// import { HistoryService } from 'src/history/history.service';
+// import { ClientProxy } from '@nestjs/microservices';
+// import { timeout } from 'rxjs';
 // import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class ProductsService {
         private readonly walletService: WalletService,
         @Inject(forwardRef(() => TradeService))
         private readonly TradeService: TradeService,
-        private readonly historyService: HistoryService,
+        // private readonly historyService: HistoryService,
         // private readonly aws: AwsService
         // @Inject("service") private rabitmq: ClientProxy
 
@@ -59,11 +59,35 @@ export class ProductsService {
         const end = start + 20
         return (await this.model.find().exec()).slice(start == 0 ? start : start + 1, end)
     }
-    async getProductsFlex(productsSearchStringDTO: ProductsSearchStringDTO): Promise<Products[]> {
-        return this.model.find({
-            productName: { $regex: productsSearchStringDTO.productName, $options: "i" },
-            brand: { $regex: productsSearchStringDTO.brand, $options: "i" }
-        })
+    async findProductsInNav(products: string): Promise<Products[]> {
+        return await this.model.aggregate([{
+            $match: {
+                $or: [
+                    { productName: { $regex: products, $options: "i" } },
+                    { brand: { $regex: products, $options: "i" } }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "classifies",
+                localField: "_id",
+                foreignField: "product",
+                as: "class"
+            }
+        }, {
+            $group: {
+                _id: "$_id",
+                productName: { $first: "$productName" },
+                images: { $first: "$images" },
+                cate: { $first: "$cate" },
+                seller: { $first: "$seller" },
+                brand: { $first: "$brand" },
+                selled: { $first: "$selled" },
+                dateUp: { $first: "$dateUp" },
+                classifies: { $first: "$class" }
+            }
+        }])
     }
     async calcProduct(id: string, calcProduct: number): Promise<any> {
         const products = await this.model.aggregate([{ $match: { _id: new mongoose.Types.ObjectId(id) } }])
@@ -95,7 +119,9 @@ export class ProductsService {
         }]
         if (dynamicValue[0]?.key == "brand" && dynamicValue[0].value != "") {
             pipeline.push({ $match: { brand: dynamicValue[0].value } })
-        } else {
+        }
+
+        else {
             pipeline.push({ $match: {} })
         }
         switch (dynamicValue[1]?.key) {
