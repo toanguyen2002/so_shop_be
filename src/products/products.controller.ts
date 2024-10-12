@@ -65,12 +65,13 @@ export class ProductsController {
         for (let key in req.query) {
             querys.push({ key: key, value: req.query[key] })
         }
-
+        return await this.productService.dynamicFind(querys)
     }
     @Public()
     @Post("findInNav")
     async findInNav(@Body() data: { product: string }) {
         // console.log(data.product);
+
         return await this.productService.findProductsInNav(data.product)
 
     }
