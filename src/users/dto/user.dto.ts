@@ -9,4 +9,5 @@ export class UserDTO {
     avata: string
     address: string
     number: string
+    isRegister: boolean
 }

@@ -95,32 +95,63 @@ export class ProductsService {
         return await this.model.findByIdAndUpdate(id, products[0])
     }
     async dynamicFind(dynamicValue: any): Promise<Products[]> {
-        const pipeline: any[] = [{
-            $lookup: {
-                from: "classifies",
-                localField: "_id",
-                foreignField: "product",
-                as: "class"
+        console.log(dynamicValue);
+
+        const pipeline: any[] = [
+            {
+                $lookup: {
+                    from: "classifies",
+                    localField: "_id",
+                    foreignField: "product",
+                    as: "class"
+                }
+            }, {
+                $unwind: "$class"
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "cate",
+                    foreignField: "_id",
+                    as: "cate"
+                }
+            },
+            {
+                $unwind: "$cate"
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    productName: { $first: "$productName" },
+                    images: { $first: "$images" },
+                    cate: { $first: "$cate.categoriesName" },
+                    seller: { $first: "$seller" },
+                    brand: { $first: "$brand" },
+                    selled: { $first: "$selled" },
+                    dateUp: { $first: "$dateUp" },
+                    resp: { $first: "$class" }
+                }
+            },
+            {
+                $project: {
+                    _id: "1",
+                    productName: 1,
+                    images: 1,
+                    cate: 1,
+                    seller: 1,
+                    brand: 1,
+                    selled: 1,
+                    dateUp: 1,
+                    resp: 1
+                }
             }
-        }, {
-            $unwind: "$class"
-        }, {
-            $group: {
-                _id: "$_id",
-                productName: { $first: "$productName" },
-                images: { $first: "$images" },
-                cate: { $first: "$cate" },
-                seller: { $first: "$seller" },
-                brand: { $first: "$brand" },
-                selled: { $first: "$selled" },
-                dateUp: { $first: "$dateUp" },
-                resp: { $first: "$class" }
-            }
-        }]
+        ]
         if (dynamicValue[0]?.key == "brand" && dynamicValue[0].value != "") {
             pipeline.push({ $match: { brand: dynamicValue[0].value } })
         }
-
+        if (dynamicValue[0]?.key == "cate" && dynamicValue[0].value != "") {
+            pipeline.push({ $match: { cate: { $regex: dynamicValue[0].value, $options: "i" } } })
+        }
         else {
             pipeline.push({ $match: {} })
         }

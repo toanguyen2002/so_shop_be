@@ -55,12 +55,25 @@ export class UsersController {
         return await this.service.findByIdAndUpdateUser(userDTO)
 
     }
-    @Post("/admin/update")
     @Roles(Role.ADMIN)
-    async updateByAdmin() {
-
+    // @Public()
+    @Post("/admin/update")
+    async updateSeller(@Body() data: { id: string }) {
+        return await this.service.acceptSeller(data.id)
     }
 
+    // @Public()
+    @Roles(Role.BUYER)
+    @Post("/buyer/register")
+    async registerSeller(@Body() data: { id: string }) {
+        return await this.service.registerSeller(data.id);
+    }
+    @Roles(Role.ADMIN)
+    // @Public()
+    @Get("/admin/getSeller")
+    async getSeller() {
+        return await this.service.findAllRegisterUser()
+    }
     @Public()
     @Post("sendOTP")
     async getOTP(@Body() user: UserDTO) {

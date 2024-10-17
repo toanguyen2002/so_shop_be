@@ -13,6 +13,7 @@ async function bootstrap() {
     .addTag('DATN')
     .build();
   // console.log('process.env', process.env);
+  console.log(process.env.NODE_ENV);
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

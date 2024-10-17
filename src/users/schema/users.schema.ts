@@ -22,6 +22,8 @@ export class Users {
     sex: string
     @Prop()
     number: string
+    @Prop()
+    isRegister: boolean
 
 
 }

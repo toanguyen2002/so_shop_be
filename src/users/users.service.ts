@@ -63,6 +63,7 @@ export class UsersService {
         return await new this.model({
             userName: userName,
             password: hash,
+            isRegister: false,
             role: ["BUYER"]
         }).save();
     }
@@ -102,6 +103,31 @@ export class UsersService {
         }
     }
 
+    async registerSeller(id: string): Promise<User> {
+        const existUser = await this.model.aggregate([{
+            $match: { _id: new mongoose.Types.ObjectId('67111541b9b6aa43a2ef5773') }
+        }])
+
+        console.log(existUser);
+
+        existUser[0].isRegister = true
+
+        return await this.model.findByIdAndUpdate(id, existUser[0], { new: true })
+    }
+
+    async findAllRegisterUser(): Promise<User> {
+        return await this.model.aggregate([{
+            $match: { isRegister: true, role: { $nin: ["SELLER", "ADMIN"] } }
+        }])
+    }
+
+    async acceptSeller(id: string): Promise<User> {
+        const existUser = await this.model.aggregate([{
+            $match: { _id: new mongoose.Types.ObjectId(id) }
+        }])
+        existUser[0].role.push('SELLER')
+        return await this.model.findByIdAndUpdate(id, existUser[0], { new: true })
+    }
 
     async resetPassWord(userDTO: UserDTO): Promise<User> {
         let newPass = ""
