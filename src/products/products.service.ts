@@ -151,7 +151,7 @@ export class ProductsService {
                     from: "classifies",
                     localField: "_id",
                     foreignField: "product",
-                    as: "class"
+                    as: "classifies"
                 }
             }
         ]
