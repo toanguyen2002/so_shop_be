@@ -125,7 +125,8 @@ export class ProductsService {
                     _id: "$_id",
                     productName: { $first: "$productName" },
                     images: { $first: "$images" },
-                    cate: { $first: "$cate.categoriesName" },
+                    cateName: { $first: "$cate.categoriesName" },
+                    cate: { $first: "$cate._id" },
                     seller: { $first: "$seller" },
                     brand: { $first: "$brand" },
                     selled: { $first: "$selled" },
@@ -138,12 +139,13 @@ export class ProductsService {
                     _id: 1,
                     productName: 1,
                     images: 1,
-                    cate: 1,
+                    cateName: 1,
                     seller: 1,
                     brand: 1,
                     selled: 1,
                     dateUp: 1,
                     resp: 1,
+                    cate: 1
                 }
             },
             {
@@ -159,7 +161,7 @@ export class ProductsService {
             pipeline.push({ $match: { brand: dynamicValue[0].value } })
         }
         if (dynamicValue[1]?.key == "cate" && dynamicValue[1].value != "") {
-            pipeline.push({ $match: { cate: { $regex: dynamicValue[1].value, $options: "i" } } })
+            pipeline.push({ $match: { cateName: { $regex: dynamicValue[1].value, $options: "i" } } })
         }
         else {
             pipeline.push({ $match: {} })
