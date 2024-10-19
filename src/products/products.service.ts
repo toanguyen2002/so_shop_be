@@ -95,8 +95,6 @@ export class ProductsService {
         return await this.model.findByIdAndUpdate(id, products[0])
     }
     async dynamicFind(dynamicValue: any): Promise<Products[]> {
-        console.log(dynamicValue);
-
         const pipeline: any[] = [
             {
                 $lookup: {
@@ -158,13 +156,13 @@ export class ProductsService {
         if (dynamicValue[0]?.key == "brand" && dynamicValue[0].value != "") {
             pipeline.push({ $match: { brand: dynamicValue[0].value } })
         }
-        if (dynamicValue[0]?.key == "cate" && dynamicValue[0].value != "") {
-            pipeline.push({ $match: { cate: { $regex: dynamicValue[0].value, $options: "i" } } })
+        if (dynamicValue[1]?.key == "cate" && dynamicValue[1].value != "") {
+            pipeline.push({ $match: { cate: { $regex: dynamicValue[1].value, $options: "i" } } })
         }
         else {
             pipeline.push({ $match: {} })
         }
-        switch (dynamicValue[1]?.key) {
+        switch (dynamicValue[2]?.key) {
             case "selled":
                 pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[1]?.value) } })
                 break;
