@@ -177,7 +177,9 @@ export class ProductsService {
                 pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[2]?.value) } })
                 break
         }
-        return (await this.model.aggregate(pipeline).exec()).slice(0, 10);
+        const start = 20 * (dynamicValue[3]?.value - 1)
+        const end = start + 20
+        return (await this.model.aggregate(pipeline).exec()).slice(start, end);
     }
     async getProductByIdForPayment(id: string): Promise<any> {
         return await this.model.aggregate([{
