@@ -105,10 +105,11 @@ export class ProductsService {
                     foreignField: "product",
                     as: "class"
                 }
-            }, {
+            }
+            , {
                 $unwind: "$class"
-            },
-            {
+            }
+            , {
                 $lookup: {
                     from: "categories",
                     localField: "cate",
@@ -130,7 +131,6 @@ export class ProductsService {
                     selled: { $first: "$selled" },
                     dateUp: { $first: "$dateUp" },
                     resp: { $first: "$class" },
-                    class: "$class",
                 }
             },
             {
@@ -144,7 +144,14 @@ export class ProductsService {
                     selled: 1,
                     dateUp: 1,
                     resp: 1,
-                    class: 1
+                }
+            },
+            {
+                $lookup: {
+                    from: "classifies",
+                    localField: "_id",
+                    foreignField: "product",
+                    as: "class"
                 }
             }
         ]
