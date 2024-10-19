@@ -95,6 +95,8 @@ export class ProductsService {
         return await this.model.findByIdAndUpdate(id, products[0])
     }
     async dynamicFind(dynamicValue: any): Promise<Products[]> {
+        console.log(dynamicValue);
+
         const pipeline: any[] = [
             {
                 $lookup: {
@@ -164,13 +166,13 @@ export class ProductsService {
         }
         switch (dynamicValue[2]?.key) {
             case "selled":
-                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[1]?.value) } })
+                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[2]?.value) } })
                 break;
             case "dateUp":
-                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[1]?.value) } })
+                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[2]?.value) } })
                 break
             case "price":
-                pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[1]?.value) } })
+                pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[2]?.value) } })
                 break
         }
         return (await this.model.aggregate(pipeline).exec()).slice(0, 10);
