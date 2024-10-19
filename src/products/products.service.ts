@@ -157,27 +157,27 @@ export class ProductsService {
                 }
             }
         ]
-        if (dynamicValue[0]?.key == "brand" && dynamicValue[0].value != "") {
-            pipeline.push({ $match: { brand: dynamicValue[0].value } })
+        if (dynamicValue[1]?.key == "brand" && dynamicValue[1].value != "") {
+            pipeline.push({ $match: { brand: dynamicValue[1].value } })
         }
-        if (dynamicValue[1]?.key == "cate" && dynamicValue[1].value != "") {
-            pipeline.push({ $match: { cateName: { $regex: dynamicValue[1].value, $options: "i" } } })
+        if (dynamicValue[2]?.key == "cate" && dynamicValue[2].value != "") {
+            pipeline.push({ $match: { cateName: { $regex: dynamicValue[2].value, $options: "i" } } })
         }
         else {
             pipeline.push({ $match: {} })
         }
-        switch (dynamicValue[2]?.key) {
+        switch (dynamicValue[3]?.key) {
             case "selled":
-                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[2]?.value) } })
+                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[3]?.value) } })
                 break;
             case "dateUp":
-                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[2]?.value) } })
+                pipeline.push({ $sort: { selled: Number.parseFloat(dynamicValue[3]?.value) } })
                 break
             case "price":
-                pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[2]?.value) } })
+                pipeline.push({ $sort: { "resp.price": Number.parseFloat(dynamicValue[3]?.value) } })
                 break
         }
-        const start = 20 * (dynamicValue[3]?.value - 1)
+        const start = 20 * (dynamicValue[0]?.value - 1)
         const end = start + 20
         return (await this.model.aggregate(pipeline).exec()).slice(start == 0 ? start : start + 1, end);
     }
