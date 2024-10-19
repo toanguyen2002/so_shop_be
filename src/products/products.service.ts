@@ -134,7 +134,7 @@ export class ProductsService {
             },
             {
                 $project: {
-                    _id: "1",
+                    _id: 1,
                     productName: 1,
                     images: 1,
                     cate: 1,
