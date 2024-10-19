@@ -129,7 +129,8 @@ export class ProductsService {
                     brand: { $first: "$brand" },
                     selled: { $first: "$selled" },
                     dateUp: { $first: "$dateUp" },
-                    resp: { $first: "$class" }
+                    resp: { $first: "$class" },
+                    class: "$class",
                 }
             },
             {
@@ -142,7 +143,8 @@ export class ProductsService {
                     brand: 1,
                     selled: 1,
                     dateUp: 1,
-                    resp: 1
+                    resp: 1,
+                    class: 1
                 }
             }
         ]
