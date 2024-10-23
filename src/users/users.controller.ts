@@ -108,7 +108,11 @@ export class UsersController {
             throw new ExceptionsHandler
         }
     }
-
+    @Public()
+    @Get("findtop10")
+    async findTop10() {
+        return await this.service.top10brand()
+    }
 
 
 }

@@ -169,4 +169,30 @@ export class UsersService {
             throw new Exception('can not exist!')
         }
     }
+    async top10brand() {
+        return await this.model.aggregate([
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "seller",
+                    as: "products"
+                }
+            },
+            {
+                $unwind: "$products"
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    name: { $first: "$name" },
+                    avata: { $first: "$avata" },
+                    address: { $first: "$address" },
+                    selled: {
+                        $sum: "$products.selled"
+                    }
+                }
+            }
+        ])
+    }
 }

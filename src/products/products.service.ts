@@ -179,6 +179,9 @@ export class ProductsService {
         }
         const start = 20 * (dynamicValue[0]?.value - 1)
         const end = start + 20
+        console.log(start);
+        console.log(end);
+
         return (await this.model.aggregate(pipeline).exec()).slice(start == 0 ? start : start + 1, end);
     }
     async getProductByIdForPayment(id: string): Promise<any> {
