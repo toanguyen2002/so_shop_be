@@ -192,6 +192,11 @@ export class UsersService {
                         $sum: "$products.selled"
                     }
                 }
+            }, {
+                $sort: { selled: 1 }
+            },
+            {
+                $limit: 10
             }
         ])
     }
