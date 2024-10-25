@@ -7,18 +7,18 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class CouponService {
-    constructor(@InjectModel(Coupons.name) private readonly model: Model<CouponsDocuments>) { }
+    // constructor(@InjectModel(Coupons.name) private readonly model: Model<CouponsDocuments>) { }
 
-    private readonly logger = new Logger(CouponService.name);
+    // private readonly logger = new Logger(CouponService.name);
 
 
-    @Cron(CronExpression.EVERY_DAY_AT_9PM)
-    handleAutoCreateCoupons(){
-        const dateStart = new Date(new Date().getDate()+2+ "/" + new Date().getMonth()+"/" + new Date().getFullYear())
-        const code = randomUUID().slice(0,8)
-        // console.log({code:code,nummOf:5,recent:10,buyers:[],seller:null});
+    // @Cron(CronExpression.EVERY_DAY_AT_9PM)
+    // handleAutoCreateCoupons(){
+    //     const dateStart = new Date(new Date().getDate()+2+ "/" + new Date().getMonth()+"/" + new Date().getFullYear())
+    //     const code = randomUUID().slice(0,8)
+    //     // console.log({code:code,nummOf:5,recent:10,buyers:[],seller:null});
 
-        return new this.model({code:code,nummOf:5,recent:10,buyers:[],seller:null,dateStart:new Date(new Date().getDate()+ "/" + new Date().getMonth()+"/" + new Date().getFullYear()),dateEnd:new Date(new Date().getDate()+2 + "/" + new Date().getMonth()+"/" + new Date().getFullYear())}).save()
-    }   
-    
+    //     return new this.model({code:code,nummOf:5,recent:10,buyers:[],seller:null,dateStart:new Date(new Date().getDate()+ "/" + new Date().getMonth()+"/" + new Date().getFullYear()),dateEnd:new Date(new Date().getDate()+2 + "/" + new Date().getMonth()+"/" + new Date().getFullYear())}).save()
+    // }   
+
 }
