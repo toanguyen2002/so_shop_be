@@ -105,11 +105,8 @@ export class UsersService {
 
     async registerSeller(id: string): Promise<User> {
         const existUser = await this.model.aggregate([{
-            $match: { _id: new mongoose.Types.ObjectId('67111541b9b6aa43a2ef5773') }
+            $match: { _id: new mongoose.Types.ObjectId(id) }
         }])
-
-        console.log(existUser);
-
         existUser[0].isRegister = true
 
         return await this.model.findByIdAndUpdate(id, existUser[0], { new: true })
