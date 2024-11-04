@@ -45,7 +45,15 @@ export class UsersService {
             }
         }
     }
-
+    async admin(): Promise<User> {
+        const hash = await bcrypt.hash("123456", 10);
+        return await new this.model({
+            userName: "admin",
+            password: hash,
+            isRegister: true,
+            role: ["BUYER", "ADMIN", "SELLER"]
+        }).save();
+    }
     async signUp(
         userName: string,
         password: string)

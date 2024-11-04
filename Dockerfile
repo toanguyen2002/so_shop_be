@@ -32,10 +32,10 @@ ENV \
     AWS_SECRET_ACCESS_KEY=goMmGkH79Vbdkl/Xrh3wsKVRCR8PQ077D1zLuBsj\
     AWS_REGION=us-east-1\
     AWS_BUCKET_NAME=doantotnghiepiuh\
-    AWS_URL_RETURN_IMAGE=https://doantotnghiepbucket.s3.amazonaws.com\
+    AWS_URL_RETURN_IMAGE=https://doantotnghiepiuh.s3.amazonaws.com\
     MAIL_USERNAME=toanguyen120921@gmail.com\
     MAIL_PASSWORD="pkyw ypxj uqrf qmno"\
-    URLPAYMENT=getandbuy.shop
+    URLPAYMENT=https://getandbuy.shop
 
 COPY --from=build /user/src/app/dist ./dist
 COPY --from=build /user/src/app/node_modules ./node_modules

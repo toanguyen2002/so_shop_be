@@ -18,7 +18,12 @@ export class UsersController {
     @Post('/register')
     async register(@Body() userDTO: UserDTO) {
         return await this.service.signUp(userDTO.userName, userDTO.password)
+    }
 
+    @Public()
+    @Post('/admin')
+    async init(@Body() userDTO: UserDTO) {
+        return await this.service.admin()
     }
 
     @Public()

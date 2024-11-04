@@ -12,8 +12,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('DATN')
     .build();
-  // console.log('process.env', process.env);
+  // mongodb://localhost:27017/osdtb
+  // console.log('process.env', process.env.MONGO_URI);
   // console.log(process.env.NODE_ENV);
+  console.log(process.env);
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

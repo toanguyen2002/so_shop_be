@@ -56,9 +56,6 @@ export class TradeController {
                 await Promise.all(i.items.map(async (item: { productId: string; classifyId: string; numberProduct: number; }) => {
                     const product = await this.productsService.getProductById(item.productId);
                     const classify = await this.classifyService.getOnelassifyById(item.classifyId);
-                    console.log(product)
-                    console.log(item.classifyId)
-
                     const balance = classify.price * item.numberProduct;
                     totalBalence += balance;
                     balanceEach += balance;
@@ -129,7 +126,6 @@ export class TradeController {
     // @Public()
     @Post("accept")
     async acceptTrade(@Body() tradeDTO: TradeDTO) {
-        console.log(tradeDTO);
         return await this.tradeService.acceptTrade(tradeDTO)
     }
 

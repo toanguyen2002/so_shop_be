@@ -19,7 +19,7 @@ export class AwsService {
             Body: file.buffer,
             ContentType: file.originalname.split(".")[1]
         }).promise()
-        return `https://doantotnghiepbucket.s3.amazonaws.com/${uuid}`
+        return `${process.env.AWS_URL_RETURN_IMAGE}/${uuid}`
 
     }
 }

@@ -44,7 +44,7 @@ import { DecriptionModule } from './decription/decription.module';
     AttributesModule,
     // MONGO_URI = "mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority"
     MongooseModule.forRoot('mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority'),
-    // MongooseModule.forRoot(process.env.MONGO_URI),
+    // MongooseModule.forRoot("mongodb://localhost:27017/osdtb"),
 
     JwtModule.register({
       global: true,
