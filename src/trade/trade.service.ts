@@ -265,7 +265,7 @@ export class TradeService {
             year: '$year',
             month: '$month',
             seller: '$seller',
-            buyer: '$buyer',
+            // buyer: '$buyer',
           },
           totalBalance: { $sum: '$balence' },
         },
