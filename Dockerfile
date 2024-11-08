@@ -35,7 +35,8 @@ ENV \
     AWS_URL_RETURN_IMAGE=https://doantotnghiepiuh.s3.amazonaws.com\
     MAIL_USERNAME=toanguyen120921@gmail.com\
     MAIL_PASSWORD="pkyw ypxj uqrf qmno"\
-    URLPAYMENT=https://getandbuy.shop
+    URLPAYMENT=https://getandbuy.shop\
+    URL_BACK="https://facebook.com"
 
 COPY --from=build /user/src/app/dist ./dist
 COPY --from=build /user/src/app/node_modules ./node_modules
