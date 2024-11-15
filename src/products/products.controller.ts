@@ -137,6 +137,12 @@ export class ProductsController {
     return this.productService.findProductByCate(name);
   }
 
+  @Public()
+  @Get('/number/seller/:id')
+  async getProductsBySellerId(@Param('id') id: string): Promise<any> {
+    return this.productService.getNumProductsByIdSeller(id);
+  }
+
   @Roles(Role.SELLER)
   @Post('/updateProducts')
   async updateProducts(

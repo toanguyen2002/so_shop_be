@@ -36,7 +36,7 @@ ENV \
     MAIL_USERNAME=toanguyen120921@gmail.com\
     MAIL_PASSWORD="pkyw ypxj uqrf qmno"\
     URLPAYMENT=https://getandbuy.shop\
-    URL_BACK="https://facebook.com"
+    URL_BACK="https://main.d3zuxjgp2skb6.amplifyapp.com"
 
 COPY --from=build /user/src/app/dist ./dist
 COPY --from=build /user/src/app/node_modules ./node_modules

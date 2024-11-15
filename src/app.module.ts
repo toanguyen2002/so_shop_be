@@ -43,12 +43,14 @@ import { DecriptionModule } from './decription/decription.module';
     WalletModule,
     AttributesModule,
     // MONGO_URI = "mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority"
-    MongooseModule.forRoot('mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority'),
-    // MongooseModule.forRoot("mongodb://localhost:27017/osdtb"),
+    MongooseModule.forRoot(
+      'mongodb+srv://toanguyen240124:DMLQKyF1sqj3Paul@cluster0.nkonvfp.mongodb.net/?retryWrites=true&w=majority',
+    ),
+    // MongooseModule.forRoot('mongodb://localhost:27017/osdtb'),
 
     JwtModule.register({
       global: true,
-      secret: "nguyenquangtoan",
+      secret: 'nguyenquangtoan',
       signOptions: { expiresIn: '3600s' },
     }),
     HistoryModule,
@@ -59,32 +61,30 @@ import { DecriptionModule } from './decription/decription.module';
           accessKeyId: process.env.AWS_ACCESS_KEY_ID,
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         },
-        region: "us-east-1",
+        region: 'us-east-1',
         endpoint: '*',
-        forcePathStyle: true
+        forcePathStyle: true,
       },
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async () => (
-        {
-          transport: {
-            host: 'smtp.gmail.com',
-            secure: false,
-            auth: {
-              user: process.env.MAIL_USERNAME,
-              pass: process.env.MAIL_PASSWORD,
-            },
-          }
-        }
-      )
+      useFactory: async () => ({
+        transport: {
+          host: 'smtp.gmail.com',
+          secure: false,
+          auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD,
+          },
+        },
+      }),
     }),
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
     AwsModule,
     ZaloModule,
-    DecriptionModule
+    DecriptionModule,
   ],
   controllers: [
     AppController,
@@ -97,19 +97,19 @@ import { DecriptionModule } from './decription/decription.module';
     TradeController,
     DecriptionController,
   ],
-  providers:
-    [AppService,
-      {
-        provide: APP_GUARD,
-        useClass: UserGuard,
-      },
-      // AwsService,
-      // TradeService,
-      // ProductsService,
-      // CartService,
-      // CategoriesService,
-      // WalletService,
-      // MediaService,
-    ],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: UserGuard,
+    },
+    // AwsService,
+    // TradeService,
+    // ProductsService,
+    // CartService,
+    // CategoriesService,
+    // WalletService,
+    // MediaService,
+  ],
 })
-export class AppModule { }
+export class AppModule {}
