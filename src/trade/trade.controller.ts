@@ -165,8 +165,13 @@ export class TradeController {
   @Post('cancel')
   async cancelTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
     const trade = await this.tradeService.getTradeByStringId(tradeDTO.tradeId);
-    if (trade.payment) {
+    if (trade.payment || trade.paymentMethod == 'zalo') {
       await this.updateCancel(trade);
+      // console.log({
+      //   user: tradeDTO.buyer,
+      //   balance: tradeDTO.balence,
+      // });
+
       await this.wallerService.increBalance({
         user: tradeDTO.buyer,
         balance: tradeDTO.balence,
@@ -189,7 +194,7 @@ export class TradeController {
   @Post('updateStatus')
   async updateStatusTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
     const trade = await this.tradeService.getTradeByStringId(tradeDTO.tradeId);
-    if (trade.payment) {
+    if (trade.payment || trade.paymentMethod == 'zalo') {
       await this.updateCancel(trade);
       await this.wallerService.increBalance({
         user: tradeDTO.seller,
