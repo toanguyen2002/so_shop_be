@@ -222,6 +222,7 @@ export class UsersService {
     ]);
     if (existUser.length) {
       existUser[0].password = hash;
+      await this.model.findByIdAndUpdate(existUser[0]._id, existUser[0]);
       await this.mailer.sendMail({
         to: existUser[0].userName, // list of receivers
         from: 'noreply@osshop.com', // sender address
