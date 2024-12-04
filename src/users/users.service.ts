@@ -246,4 +246,8 @@ export class UsersService {
       };
     }
   }
+
+  async getALLEmailUser() {
+    return await this.model.find();
+  }
 }

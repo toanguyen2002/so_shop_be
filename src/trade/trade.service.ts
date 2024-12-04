@@ -176,7 +176,7 @@ export class TradeService {
         },
       },
     ]);
-    // console.log(trade);
+
     trade[0].isCancel = true;
     return await this.model.findByIdAndUpdate(trade[0]._id, trade[0]);
   }
@@ -241,9 +241,6 @@ export class TradeService {
 
   async successPayment(tradeId: string): Promise<any> {
     const rs = await this.model.aggregate([{ $match: { tradeId: tradeId } }]);
-    // if (rs[0].payment) {
-    //     return false
-    // }
     rs[0].payment = true;
     return await this.model.findByIdAndUpdate(rs[0]._id, rs[0]);
   }
@@ -288,72 +285,73 @@ export class TradeService {
     ]);
   }
 
-  //     db.trades.aggregate([
-  //         {
-  //             $match: { }
-  //         },
-  //         {
-  //             $lookup: {
-  //                 from: "users",
-  //                 localField: "buyer",
-  //                 foreignField: "_id",
-  //                 as: "buyers"
-  //           }
-  //         },
-  //         {
-  //             $lookup: {
-  //                 from: "users",
-  //                 localField: "seller",
-  //                 foreignField: "_id",
-  //                 as: "sellers"
-  //           }
-  //         },
-  //         {
-  //             $unwind: "$buyers"
-  //         },
-  //         {
-  //             $replaceRoot: {
-  //                 newRoot: {
-  //                     $mergeObjects: [
-  //                         {
-  //                             _id: "$_id",
-  //                             brand: "$brand",
-  //                             sellerAccept: "$sellerAccept",
-  //                             tradeTitle: "$tradeTitle",
-  //                             tradeStatus: "$tradeStatus",
-  //                             payment: "$payment",
-  //                             balance: "$balance", // Corrected spelling
-  //                             products: "$products",
-  //                             sellers: "$sellers"
-  //                 },
-  //                         { buyers: "$buyers" } // Merged sellers separately
-  //                     ]
-  //                 }
-  //             }
-  //         },
-  //         {
-  //             $unwind: "$sellers"
-  //           }, {
-  //             $replaceRoot: {
-  //                 newRoot: {
-  //                     $mergeObjects: [
-  //                         {
-  //                             brand: "$brand",
-  //                             sellerAccept: "$sellerAccept",
-  //                             tradeTitle: "$tradeTitle",
-  //                             tradeStatus: "$tradeStatus",
-  //                             payment: "$payment",
-  //                             balance: "$balance", // Corrected spelling
-  //                             products: "$products",
-  //                             buyersname: "$buyers.name",
-  //                             buyersaddress: "$buyers.address",
-  //                             buyersavata: "$buyers.avata",
-  //                             buyersuserName: "$buyers.userName",
-  //                         },
-  //                         { sellers: "$sellers" } // Merged sellers separately
-  //                     ]
-  //                 }
-  //             }
-  //         }
-  //     ])
+  async gettradeDayInMonth(
+    userId: string,
+    month: number,
+    year: number,
+  ): Promise<any> {
+    return this.model.aggregate([
+      {
+        $project: {
+          day: { $dayOfMonth: '$dateTrade' },
+          month: { $month: '$dateTrade' },
+          year: { $year: '$dateTrade' },
+          seller: 1,
+          products: 1,
+          isCancel: 1,
+          balence: 1,
+          classifyId: { $arrayElemAt: ['$products.classifyId', 0] },
+        },
+      },
+      {
+        $match: {
+          month: month,
+          year: year,
+          isCancel: false,
+        },
+      },
+      {
+        $unwind: '$products',
+      },
+      {
+        $group: {
+          _id: {
+            day: '$day',
+            seller: '$seller',
+            classifyId: '$products.classifyId',
+          },
+          totalProducts: { $sum: '$products.numberProduct' },
+          totalBalance: { $sum: '$balence' },
+        },
+      },
+      {
+        $group: {
+          _id: { day: '$_id.day' },
+          sellerDetails: {
+            $push: {
+              seller: '$_id.seller',
+              classifyId: '$_id.classifyId',
+              totalProducts: '$totalProducts',
+              totalBalance: '$totalBalance',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          day: '$_id.day',
+          sellerDetails: 1,
+          _id: 0,
+        },
+      },
+      {
+        $unwind: '$sellerDetails',
+      },
+      {
+        $match: {
+          'sellerDetails.seller': new mongoose.Types.ObjectId(userId),
+        },
+      },
+    ]);
+  }
 }

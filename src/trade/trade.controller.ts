@@ -258,6 +258,18 @@ export class TradeController {
   async getTradeInYear(@Body() data: { userId: string }): Promise<any> {
     return this.tradeService.gettradeInYear(data.userId);
   }
+
+  @Public()
+  @Post('gettradeDayInMonth')
+  async getTradeInDayInMonth(
+    @Body() data: { userId: string; month: number; year: number },
+  ): Promise<any> {
+    return this.tradeService.gettradeDayInMonth(
+      data.userId,
+      data.month,
+      data.year,
+    );
+  }
   async calcItem(items: any): Promise<any> {
     await Promise.all(
       items.map(
