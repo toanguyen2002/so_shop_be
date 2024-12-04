@@ -143,7 +143,7 @@ export class ClassifyService {
     return await this.model.aggregate([
       {
         $match: {
-          product: new mongoose.Types.ObjectId(id),
+          _id: new mongoose.Types.ObjectId(id),
         },
       },
       {
