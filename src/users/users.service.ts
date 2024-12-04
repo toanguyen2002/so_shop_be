@@ -91,6 +91,18 @@ export class UsersService {
     ]);
     return existUser.length;
   }
+  async checkNum(userName: string, number: string): Promise<User> {
+    const existUser = await this.model.aggregate([
+      {
+        $match: { userName: userName },
+      },
+    ]);
+    if (existUser.length) {
+      existUser[0].number == number;
+      return true;
+    }
+    return existUser.length;
+  }
   async findByIdAndUpdateUser(userDTO: UserDTO): Promise<User> {
     if (userDTO.password !== undefined) {
       const hash = await bcrypt.hash(userDTO.password, 10);

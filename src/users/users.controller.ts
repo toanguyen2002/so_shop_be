@@ -130,4 +130,9 @@ export class UsersController {
       userName: data.userName,
     });
   }
+
+  @Post('checkNum')
+  async checkNum(@Body() data: { userName: string; number: string }) {
+    return await this.service.checkNum(data.userName, data.number);
+  }
 }
