@@ -37,4 +37,10 @@ export class ClassifyController {
   async findAll(): Promise<Classify[]> {
     return await this.classifyService.getAllClass();
   }
+
+  @Public()
+  @Get('/prds/:id')
+  async findProByClass(@Param('id') id: string): Promise<any[]> {
+    return await this.classifyService.getProductsBYIDClass(id);
+  }
 }

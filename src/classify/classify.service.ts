@@ -138,4 +138,25 @@ export class ClassifyService {
   async getAllClass() {
     return await this.model.find();
   }
+
+  async getProductsBYIDClass(id: string) {
+    return await this.model.aggregate([
+      {
+        $match: {
+          product: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'product',
+          foreignField: '_id',
+          as: 'p',
+        },
+      },
+      {
+        $unwind: '$p',
+      },
+    ]);
+  }
 }
