@@ -248,6 +248,11 @@ export class TradeService {
   async gettradeInYear(userId: string): Promise<any> {
     return this.model.aggregate([
       {
+        $match: {
+          isCancel: false,
+        },
+      },
+      {
         $project: {
           year: { $year: '$dateTrade' },
           month: { $month: '$dateTrade' },
