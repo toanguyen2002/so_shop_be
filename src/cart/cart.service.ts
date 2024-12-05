@@ -259,52 +259,55 @@ export class CartService {
       {
         $unwind: { path: '$productsDetails', preserveNullAndEmptyArrays: true },
       },
-        {
-          $replaceRoot: {
-            newRoot: {
-              $mergeObjects: [
-                {
-                  productName: '$productsDetails.productName',
-                  brand: '$productsDetails.brand',
-                  cate: '$productsDetails.cate',
-                  key: '$classifyDetails.key',
-                  value: '$classifyDetails.value',
-                  price: '$classifyDetails.price',
-                  totalNumberProducts: '$totalNumberProducts',
-                },
-              ],
-            },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              {
+                productName: '$productsDetails.productName',
+                brand: '$productsDetails.brand',
+                cate: '$productsDetails.cate',
+                key: '$classifyDetails.key',
+                value: '$classifyDetails.value',
+                price: '$classifyDetails.price',
+                totalNumberProducts: '$totalNumberProducts',
+              },
+            ],
           },
         },
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'cate',
-            foreignField: '_id',
-            as: 'categoriesDetails',
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'cate',
+          foreignField: '_id',
+          as: 'categoriesDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$categoriesDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              {
+                productName: '$productName',
+                brand: '$brand',
+                cate: '$cate',
+                key: '$key',
+                value: '$value',
+                price: '$price',
+                categoriesName: '$categoriesDetails.categoriesName',
+                totalNumberProducts: '$totalNumberProducts',
+              },
+            ],
           },
         },
-        {
-          $unwind: { path: '$categoriesDetails', preserveNullAndEmptyArrays: true } ',
-        },
-        {
-          $replaceRoot: {
-            newRoot: {
-              $mergeObjects: [
-                {
-                  productName: '$productName',
-                  brand: '$brand',
-                  cate: '$cate',
-                  key: '$key',
-                  value: '$value',
-                  price: '$price',
-                  categoriesName: '$categoriesDetails.categoriesName',
-                  totalNumberProducts: '$totalNumberProducts',
-                },
-              ],
-            },
-          },
-        },
+      },
     ]);
 
     return data;
