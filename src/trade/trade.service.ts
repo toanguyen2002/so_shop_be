@@ -77,6 +77,7 @@ export class TradeService {
       },
     ]);
   }
+
   async getTradeByTradeId(tradeDTO: TradeDTO): Promise<any> {
     return await this.model.aggregate([
       {
