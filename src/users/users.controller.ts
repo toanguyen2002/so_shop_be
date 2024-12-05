@@ -130,12 +130,12 @@ export class UsersController {
       userName: data.userName,
     });
   }
-
+  @Public()
   @Post('checkNum')
   async checkNum(@Body() data: { userName: string; number: string }) {
     return await this.service.checkNum(data.userName, data.number);
   }
-
+  @Public()
   @Post('createOTP')
   async createOTP(@Body() data: { userName: string }) {
     return await this.service.createOTP(data.userName);
