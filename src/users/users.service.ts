@@ -245,7 +245,7 @@ export class UsersService {
                     <div class="content">
                     <p>Dear You</p>
 
-                <p>confirm that your order reset your password</p>
+                <p>Confirm that your new password</p>
 
                 <p>change Pass success</p>
 
@@ -261,5 +261,33 @@ export class UsersService {
 
   async getALLEmailUser() {
     return await this.model.find();
+  }
+
+  async createOTP(userName: string) {
+    let OTP = '';
+    for (let index = 0; index < 5; index++) {
+      OTP += Math.floor(Math.random() * 10).toString();
+    }
+    await this.mailer.sendMail({
+      to: userName,
+      from: 'noreply@osshop.com',
+      subject: 'Reset Password',
+      text: 'Dear',
+      html: `
+                    <div class="content">
+                    <p>Dear You</p>
+
+                <p>confirm that your order reset your password</p>
+
+                <p>${OTP} is your OTP</p>
+
+                <p>Sincerely</p>
+        </div>`,
+    });
+    return {
+      status: 'yêu cầu thành công ',
+      OTP: OTP,
+      code: 200,
+    };
   }
 }
