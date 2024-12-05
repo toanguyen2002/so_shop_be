@@ -240,16 +240,16 @@ export class CartService {
       {
         $lookup: {
           from: 'classifies',
-          localField: 'classifyId',
-          foreignField: '_id',
+          localField: '_id',
+          foreignField: 'classifyId',
           as: 'classifyDetails',
         },
       },
       {
         $lookup: {
           from: 'products',
-          localField: 'productId',
-          foreignField: '_id',
+          localField: '_id',
+          foreignField: 'productId',
           as: 'productsDetails',
         },
       },
@@ -259,54 +259,53 @@ export class CartService {
       {
         $unwind: { path: '$productsDetails', preserveNullAndEmptyArrays: true },
       },
-      //   {
-      //     $replaceRoot: {
-      //       newRoot: {
-      //         $mergeObjects: [
-      //           {
-      //             productName: '$productsDetails.productName',
-      //             brand: '$productsDetails.brand',
-      //             cate: '$productsDetails.cate',
-      //             key: '$classifyDetails.key',
-      //             value: '$classifyDetails.value',
-      //             price: '$classifyDetails.price',
-      //             totalNumberProducts: '$totalNumberProducts',
-      //           },
-      //         ],
-      //       },
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: 'categories',
-      //       localField: 'cate',
-      //       foreignField: '_id',
-      //       as: 'categoriesDetails',
-      //     },
-      //   },
-      //   {
-      //     $unwind: { path: $categoriesDetails', preserveNullAndEmptyArrays: true } ',
-      //   },
-      //   {
-      //     $replaceRoot: {
-      //       newRoot: {
-      //         $mergeObjects: [
-      //           {
-      //             productName: '$productName',
-      //             brand: '$brand',
-      //             cate: '$cate',
-      //             key: '$key',
-      //             value: '$value',
-      //             price: '$price',
-      //             categoriesName: '$categoriesDetails.categoriesName',
-      //             totalNumberProducts: '$totalNumberProducts',
-      //           },
-      //         ],
-      //       },
-      //     },
-      //   },
+        {
+          $replaceRoot: {
+            newRoot: {
+              $mergeObjects: [
+                {
+                  productName: '$productsDetails.productName',
+                  brand: '$productsDetails.brand',
+                  cate: '$productsDetails.cate',
+                  key: '$classifyDetails.key',
+                  value: '$classifyDetails.value',
+                  price: '$classifyDetails.price',
+                  totalNumberProducts: '$totalNumberProducts',
+                },
+              ],
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'cate',
+            foreignField: '_id',
+            as: 'categoriesDetails',
+          },
+        },
+        {
+          $unwind: { path: '$categoriesDetails', preserveNullAndEmptyArrays: true } ',
+        },
+        {
+          $replaceRoot: {
+            newRoot: {
+              $mergeObjects: [
+                {
+                  productName: '$productName',
+                  brand: '$brand',
+                  cate: '$cate',
+                  key: '$key',
+                  value: '$value',
+                  price: '$price',
+                  categoriesName: '$categoriesDetails.categoriesName',
+                  totalNumberProducts: '$totalNumberProducts',
+                },
+              ],
+            },
+          },
+        },
     ]);
-    console.log('CHEK', data);
 
     return data;
   }
