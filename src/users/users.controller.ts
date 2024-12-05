@@ -122,7 +122,7 @@ export class UsersController {
   async findTop10() {
     return await this.service.top10brand();
   }
-
+  @Public()
   @Post('changePass')
   async changePass(@Body() data: { userName: string; passW: string }) {
     return await this.service.changePassWord({
