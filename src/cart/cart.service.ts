@@ -178,7 +178,7 @@ export class CartService {
   }
 
   async getProductsTrend() {
-    return await this.model.aggregate([
+    const data = await this.model.aggregate([
       {
         $unwind: '$products',
       },
@@ -254,10 +254,10 @@ export class CartService {
         },
       },
       {
-        $unwind: '$classifyDetails',
+        $unwind: { path: '$classifyDetails', preserveNullAndEmptyArrays: true },
       },
       {
-        $unwind: '$productsDetails',
+        $unwind: { path: '$productsDetails', preserveNullAndEmptyArrays: true },
       },
       {
         $replaceRoot: {
@@ -306,5 +306,8 @@ export class CartService {
         },
       },
     ]);
+    console.log('CHEK', data);
+
+    return data;
   }
 }
