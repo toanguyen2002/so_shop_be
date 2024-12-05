@@ -20,15 +20,16 @@ export class CartController {
     const { buyer, seller, ...payload } = cartDTO;
     return await this.cartService.removeCart(buyer, seller, payload);
   }
+  @Public()
+  @Get('checkCart')
+  async checkCart() {
+    console.log('l');
 
+    return await this.cartService.getProductsTrend();
+  }
   @Public()
   @Get('/:id')
   async getCart(@Param('id') id: string) {
     return await this.cartService.getCartByBuyerId(id);
-  }
-  @Public()
-  @Get('checkCart')
-  async checkCart() {
-    return await this.cartService.getProductsTrend();
   }
 }
