@@ -193,26 +193,28 @@ export class TradeController {
   @Public()
   @Post('updateStatus')
   async updateStatusTrade(@Body() tradeDTO: TradeDTO): Promise<any> {
-    const trade = await this.tradeService.getTradeByStringId(tradeDTO.tradeId);
-    if (trade.payment || trade.paymentMethod == 'zalo') {
-      await this.updateCancel(trade);
-      await this.wallerService.increBalance({
-        user: tradeDTO.seller,
-        balance: tradeDTO.balence,
-      });
-      await this.tradeService.cancelTrade(tradeDTO);
-      return {
-        code: 200,
-        title: 'cancel success',
-      };
-    } else {
-      this.updateCancel(trade);
-      await this.tradeService.cancelTrade(tradeDTO);
-      return {
-        code: 200,
-        title: 'cancel success',
-      };
-    }
+    // const trade = await this.tradeService.getTradeByStringId(tradeDTO.tradeId);
+    // if (trade.payment || trade.paymentMethod == 'zalo') {
+    //   await this.updateCancel(trade);
+    //   await this.wallerService.increBalance({
+    //     user: tradeDTO.seller,
+    //     balance: tradeDTO.balence,
+    //   });
+    //   await this.tradeService.cancelTrade(tradeDTO);
+    //   return {
+    //     code: 200,
+    //     title: 'cancel success',
+    //   };
+    // } else {
+    //   this.updateCancel(trade);
+    //   await this.tradeService.cancelTrade(tradeDTO);
+    //   return {
+    //     code: 200,
+    //     title: 'cancel success',
+    //   };
+    // }
+
+    return await this.tradeService.updateStatusTrade(tradeDTO);
   }
   @Public()
   @Get('/buyer/:id')
