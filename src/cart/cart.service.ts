@@ -120,11 +120,11 @@ export class CartService {
 
               await this.classifService.calcClassify(
                 item.classifyId,
-                -item.numberProduct,
+                item.numberProduct,
               );
               await this.productsService.calcProduct(
                 item.productId,
-                item.numberProduct,
+                -item.numberProduct,
               );
               if (
                 cart[0].products[i].items[j].numberProduct -
