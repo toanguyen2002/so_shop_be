@@ -6,6 +6,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { randomUUID } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
+import { TradeService } from 'src/trade/trade.service';
+import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
 export class CouponService {
@@ -13,6 +15,8 @@ export class CouponService {
     @InjectModel(Coupons.name) private readonly model: Model<CouponsDocuments>,
     private readonly mailService: MailerService,
     private readonly userService: UsersService,
+    private readonly tradeService: TradeService,
+    private readonly walletService: WalletService,
   ) {}
 
   private readonly logger = new Logger(CouponService.name);
@@ -67,31 +71,55 @@ export class CouponService {
     return dateStart;
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_8AM)
-  handleAutoNotiDemo() {
-    const dateStart = new Date(
-      new Date().getDate() +
-        2 +
-        '/' +
-        new Date().getMonth() +
-        '/' +
-        new Date().getFullYear(),
-    );
-    this.sendEmail();
-    return dateStart;
-  }
-  @Cron(CronExpression.EVERY_DAY_AT_10PM)
-  handleAutoNoti2() {
-    const dateStart = new Date(
-      new Date().getDate() +
-        2 +
-        '/' +
-        new Date().getMonth() +
-        '/' +
-        new Date().getFullYear(),
-    );
-    this.sendEmail();
-    return dateStart;
+  // @Cron(CronExpression.EVERY_DAY_AT_8AM)
+  // handleAutoNotiDemo() {
+  //   const dateStart = new Date(
+  //     new Date().getDate() +
+  //       2 +
+  //       '/' +
+  //       new Date().getMonth() +
+  //       '/' +
+  //       new Date().getFullYear(),
+  //   );
+  //   this.sendEmail();
+  //   return dateStart;
+  // }
+  // @Cron(CronExpression.EVERY_DAY_AT_10PM)
+  // handleAutoNoti2() {
+  //   const dateStart = new Date(
+  //     new Date().getDate() +
+  //       2 +
+  //       '/' +
+  //       new Date().getMonth() +
+  //       '/' +
+  //       new Date().getFullYear(),
+  //   );
+  //   this.sendEmail();
+  //   return dateStart;
+  // }
+
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  async sendBalance() {
+    const listrs = await this.tradeService.getAllTrade();
+    listrs.forEach(async (rs) => {
+      if (rs.tradeStatus) {
+        try {
+          await this.walletService.increBalance({
+            balance: rs.balence,
+            user: rs.seller.toString(),
+          });
+          return {
+            code: 200,
+            status: 'success',
+          };
+        } catch (error) {
+          return {
+            code: 400,
+            status: error,
+          };
+        }
+      }
+    });
   }
 
   async sendEmail() {

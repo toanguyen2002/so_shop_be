@@ -99,11 +99,14 @@ export class ProductsService {
     ]);
   }
   async calcProduct(id: string, calcProduct: number): Promise<any> {
+    console.log('CALC calcProduct', { id, calcProduct });
+
     const products = await this.model.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
     ]);
     products[0].selled = products[0].selled + calcProduct;
-    return await this.model.findByIdAndUpdate(id, products[0]);
+    await this.model.findByIdAndUpdate(id, products[0], { new: true });
+    return true;
   }
   async dynamicFind(dynamicValue: any): Promise<any> {
     const pipeline: any = [

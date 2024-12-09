@@ -32,8 +32,6 @@ export class WalletService {
   }
 
   async increBalance(walletDTO: WallerDTO): Promise<Wallet> {
-    console.log('walletDTO', walletDTO);
-
     const rs = await this.model.aggregate([
       { $match: { user: new mongoose.Types.ObjectId(walletDTO.user) } },
     ]);

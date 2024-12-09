@@ -98,8 +98,8 @@ export class ClassifyService {
     }
   }
   async calcClassify(id: string, calcClassify: number): Promise<any> {
-    // console.log(id);
-    // console.log(calcClassify);
+    console.log('CALC calcClassify', { id, calcClassify });
+
     const classify = await this.model.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id.toString()) } },
     ]);
@@ -108,7 +108,8 @@ export class ClassifyService {
       return false;
     }
     classify[0].stock = classify[0].stock + calcClassify;
-    return await this.model.findByIdAndUpdate(id, classify[0]);
+    await this.model.findByIdAndUpdate(id, classify[0], { new: true });
+    return true;
   }
   async getclassifybyRequest(value: any): Promise<any> {
     const querys = [];

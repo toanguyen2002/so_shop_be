@@ -106,7 +106,26 @@ export class CartService {
               cart[0].products[i].items[j].productId == item.productId &&
               cart[0].products[i].items[j].classifyId == item.classifyId
             ) {
-              this.calcUpdate(item);
+              console.log(
+                `await this.classifService.calcClassify(
+                item.classifyId,
+                -item.numberProduct,
+              );
+              await this.productsService.calcProduct(
+                item.productId,
+                item.numberProduct,
+              );`,
+                item,
+              );
+
+              await this.classifService.calcClassify(
+                item.classifyId,
+                -item.numberProduct,
+              );
+              await this.productsService.calcProduct(
+                item.productId,
+                item.numberProduct,
+              );
               if (
                 cart[0].products[i].items[j].numberProduct -
                   item.numberProduct <=
@@ -161,12 +180,13 @@ export class CartService {
     return rs[0];
   }
   async calcUpdate(item: any) {
-    if (
-      await this.classifService.calcClassify(
-        item.classifyId,
-        -item.numberProduct,
-      )
-    ) {
+    const calcClassify = await this.classifService.calcClassify(
+      item.classifyId,
+      -item.numberProduct,
+    );
+    console.log('item item item item ', item);
+
+    if (calcClassify) {
       await this.productsService.calcProduct(
         item.productId,
         item.numberProduct,

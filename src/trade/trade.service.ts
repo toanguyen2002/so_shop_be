@@ -182,6 +182,9 @@ export class TradeService {
     return await this.model.findByIdAndUpdate(trade[0]._id, trade[0]);
   }
 
+  async getAllTrade() {
+    return await this.model.find();
+  }
   async getTradeById(tradeDTO: TradeDTO): Promise<Trade> {
     const rs = await this.model.aggregate([
       { $match: { tradeId: tradeDTO.tradeId } },
@@ -215,7 +218,7 @@ export class TradeService {
       { $match: { tradeId: tradeDTO.tradeId } },
     ]);
     rs[0].tradeStatus = true;
-    return await this.model.findByIdAndUpdate(rs[0]._id, rs[0]);
+    return await this.model.findByIdAndUpdate(rs[0]._id, rs[0], { new: true });
   }
   async updateIsTrade(id: string): Promise<any> {
     const rs = await this.model.aggregate([
